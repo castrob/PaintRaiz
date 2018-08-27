@@ -1,6 +1,7 @@
 package com.castrob.Algoritmos;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public abstract class Figura {
 
@@ -27,11 +28,18 @@ public abstract class Figura {
         g.drawLine(x, y, x, y);
     }
 
+    public abstract void desenharFiguraDDA(ArrayList<Figura> figuras, Graphics g);
     public abstract void desenharFiguraDDA(Graphics g);
     public abstract void desenharFiguraBresenham(Graphics g);
     public abstract void rotacionarFigura( double grau);
     public abstract void mudarEscalaFigura(double escala);
     public abstract void moverFigura(Ponto novoPonto);
 
-
+    @Override
+    public String toString() {
+        return "Figura{" +
+                "pontoInicial=" + pontoInicial +
+                ", pontoFinal=" + pontoFinal +
+                '}';
+    }
 }

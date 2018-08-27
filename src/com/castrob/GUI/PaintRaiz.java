@@ -4,13 +4,16 @@ import com.castrob.Algoritmos.Figura;
 import com.castrob.Algoritmos.Ponto;
 import com.castrob.Algoritmos.Reta;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 public class PaintRaiz extends Frame {
 
     //Constantes para atalhos no menu
     private static final int kControlA = 65;
+    private static final int kControlB = 66;
     private static final int kControlD = 68;
     private static final int kControlC = 67;
     private static final int kControlR = 82;
@@ -19,7 +22,6 @@ public class PaintRaiz extends Frame {
     private static final int kControlX = 88;
 
     //Objeto Reta para ser plotado
-    private Reta reta = new Reta();
 
     //Painel onde tem o desenho (Visor ?)
     private DrawingPanel panel;
@@ -57,8 +59,8 @@ public class PaintRaiz extends Frame {
         Menu sobre = new Menu("Sobre");
 
         arquivo.add(new MenuItem("Sair", new MenuShortcut(kControlX))).addActionListener(new WindowHandler());
-        algoritmosReta.add(new MenuItem("Reta DDA")).addActionListener(new WindowHandler());
-        algoritmosReta.add(new MenuItem("Reta Bresenham")).addActionListener(new WindowHandler());
+        algoritmosReta.add(new MenuItem("Reta DDA", new MenuShortcut(kControlD))).addActionListener(new WindowHandler());
+        algoritmosReta.add(new MenuItem("Reta Bresenham", new MenuShortcut(kControlB))).addActionListener(new WindowHandler());
         algoritmosReta.add(new MenuItem("Transladar Reta")).addActionListener(new WindowHandler());
         algoritmosReta.add(new MenuItem("Rotacionar Reta")).addActionListener(new WindowHandler());
         algoritmosReta.add(new MenuItem("Escalar Reta")).addActionListener(new WindowHandler());
@@ -94,13 +96,24 @@ public class PaintRaiz extends Frame {
          */
         @Override
         public void actionPerformed(ActionEvent e) {
+            Reta reta = new Reta();
             String acao = e.getActionCommand();
             if(acao.equalsIgnoreCase("sair")){
                 System.exit(0);
             }else if(acao.equalsIgnoreCase("Reta DDA")){
                 Menu menu = getMenuBar().getMenu(1);
-                for(int i = 0; i < menu.getItemCount(); menu.getItem(i).setEnabled(false), i++);
-                panel.desenharFigura(reta);
+                for(int i = 0; i < menu.getItemCount(); menu.getItem(i).setEnabled(true), i++);
+                getMenuBar().getShortcutMenuItem(new MenuShortcut(kControlD)).setEnabled(true);
+                panel.desenharReta(reta, 0);
+            }else if(acao.equalsIgnoreCase("Reta Bresenham")){
+                Menu menu = getMenuBar().getMenu(1);
+                for(int i = 0; i < menu.getItemCount(); menu.getItem(i).setEnabled(true), i++);
+                getMenuBar().getShortcutMenuItem(new MenuShortcut(kControlB)).setEnabled(true);
+                panel.desenharReta(reta, 1);
+            }else if(acao.equalsIgnoreCase("Sobre")){
+                JOptionPane.showMessageDialog(null, "TP1 - Computacao Paralela\n Joao Castro - 562874", "About", JOptionPane.PLAIN_MESSAGE);
+            }else {
+                JOptionPane.showMessageDialog(null, "Voce clickou em " + e.getActionCommand(), "PaintRaiz", JOptionPane.PLAIN_MESSAGE);
             }
         }
     }
@@ -109,24 +122,38 @@ public class PaintRaiz extends Frame {
         private Ponto pontoInicial = null;
         private Ponto pontoFinal = null;
         private Figura figura = null;
+        private int algoritmo = 0;
+        ArrayList<Figura> figuraList = new ArrayList<Figura>();
+        int pos = 0;
 
         public void paint(Graphics g){
             g.setColor(Color.BLACK);
-            figura.desenharFiguraBresenham(g);
+            if(algoritmo == 0 && !(figuraList.size() == 0)){
+                for(Figura f : figuraList)
+                    f.desenharFiguraDDA(g);
+            }
+            else if(algoritmo == 1 && figura != null){
+                for(Figura f : figuraList)
+                    f.desenharFiguraBresenham(g);
+            }
         }
 
-        public void desenharFigura(Figura figura) {
+        public void desenharReta(Figura figura, int opcode) {
             this.figura = figura;
+            this.algoritmo = opcode;
         }
+
         @Override
         public void mouseClicked(MouseEvent e) {
             if(pontoInicial == null){
                 pontoInicial = new Ponto(e.getPoint().getX(), e.getPoint().getY());
                 figura.pontoInicial = pontoInicial;
-            }else{
+            }else if(pontoFinal == null){
                 pontoFinal = new Ponto(e.getPoint().getX(), e.getPoint().getY());
                 figura.pontoFinal = pontoFinal;
+                figuraList.add(figura);
                 repaint();
+                pontoFinal = pontoInicial = null;
             }
         }
 

@@ -1,6 +1,7 @@
 package com.castrob.Algoritmos;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Reta extends Figura{
 
@@ -9,6 +10,15 @@ public class Reta extends Figura{
     }
 
     public Reta(){ }
+
+    @Override
+    public void desenharFiguraDDA(ArrayList<Figura> figuras, Graphics g) {
+        for(Figura f : figuras){
+            this.pontoFinal = f.pontoFinal.clone();
+            this.pontoInicial = f.pontoInicial.clone();
+            desenharFiguraDDA(g);
+        }
+    }
 
     /**
      * Metodo para desenhar a reta na tela utilizando o algoritmo DDA
@@ -48,7 +58,7 @@ public class Reta extends Figura{
         int dX, dY, x, y, i, const1, const2, p, xIncr, yIncr;
 
         dX = (int)Math.round(this.pontoFinal.x - this.pontoInicial.x);
-        dY = (int)Math.round(this.pontoFinal.y - this.pontoInicial.x);
+        dY = (int)Math.round(this.pontoFinal.y - this.pontoInicial.y);
 
         if( dX >= 0)
             xIncr = 1;
