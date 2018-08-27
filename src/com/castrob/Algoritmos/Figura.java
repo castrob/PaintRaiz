@@ -17,7 +17,8 @@ public abstract class Figura {
         matriz[x][y] = cor;
     }
 
-    public abstract void desenharFigura();
+    public abstract void desenharFiguraDDA();
+    public abstract void desenharFiguraBresenham();
     public abstract void rotacionarFigura( double grau);
     public abstract void mudarEscalaFigura(double escala);
     public abstract void moverFigura(Ponto novoPonto);

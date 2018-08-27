@@ -8,9 +8,10 @@ public class Reta extends Figura{
 
     /**
      * Metodo para desenhar a reta na tela utilizando o algoritmo DDA
+     * Fonte: Slides de Computacao Grafica presentes no SGA
      */
     @Override
-    public void desenharFigura() {
+    public void desenharFiguraDDA() {
         double dX = this.pontoFinal.x - this.pontoInicial.x;
         double dY = this.pontoFinal.y - this.pontoInicial.y;
         double x = this.pontoInicial.x;
@@ -33,13 +34,85 @@ public class Reta extends Figura{
         }
     }
 
-    //TODO Colocar Algoritmo de Desenhar sendo DDA ou Bresenham
+
+    /**
+     * Metodo para plotar a figura utilizando o algoritmo de Bresenham
+     * Fonte: Slides de Computacao Grafica Presentes no SGA
+     */
+    @Override
+    public void desenharFiguraBresenham() {
+        int dX, dY, x, y, i, const1, const2, p, xIncr, yIncr;
+
+        dX = (int)Math.round(this.pontoFinal.x - this.pontoInicial.x);
+        dY = (int)Math.round(this.pontoFinal.y - this.pontoInicial.x);
+
+        if( dX >= 0)
+            xIncr = 1;
+        else{
+            xIncr = -1;
+            dX = dX * -1;
+        }
+        if(dY >= 0)
+            yIncr = 1;
+        else {
+            yIncr = -1;
+            dY = dY * -1;
+        }
+        x = (int)Math.round(pontoInicial.x);
+        y = (int)Math.round(pontoInicial.y);
+        colorirPonto(x, y, 0x000000);
+
+        if(dY < dX){
+            p = (2 * dY) - dX;
+            const1 = 2 * dY;
+            const2 = 2*(dY - dX);
+
+            for(i = 0; i < dX; i++){
+                x += xIncr;
+                if (p < 0)
+                    p += const1;
+                else{
+                    y += yIncr;
+                    p += const2;
+                }
+                colorirPonto(x, y, 0x000000);
+            }
+        }else{
+            p = (2 * dX) - dY;
+            const1 = 2 * dX;
+            const2 = 2 * (dX - dY);
+
+            for (i = 0; i < dY; i++){
+                y += yIncr;
+                if (p < 0)
+                    p += const1;
+                else{
+                    x += xIncr;
+                    p += const2;
+                }
+                colorirPonto(x, y, 0x000000);
+            }
+        }
+    }
+
+
 
     @Override
     public void rotacionarFigura(double grau) {
-    //TODO RotacionarReta
-    }
+        Ponto pontoOriginal = this.pontoInicial.clone();
 
+        moverFigura(new Ponto(0, 0));
+
+        grau = Math.toRadians(grau);
+
+        this.pontoFinal = new Ponto(
+                ((Math.round(this.pontoFinal.x)*Math.cos(grau)) - (Math.round(this.pontoFinal.y) * Math.sin(grau))),
+                ((Math.round(this.pontoFinal.x)*Math.sin(grau)) + (Math.round(this.pontoFinal.y) * Math.cos(grau))));
+
+        moverFigura(pontoOriginal);
+
+    }
+    //TODO Verificar pontoOriginal (inicial, final)
     @Override
     public void mudarEscalaFigura(double escala) {
         //Armazena a posicao inicial da linha
@@ -59,6 +132,7 @@ public class Reta extends Figura{
      * Metodo de Translacao T(a,b)
      * @param novoPonto Ponto do Mouse (x,y)
      */
+    //TODO Verficiar se esta' correto!!!
     @Override
     public void moverFigura(Ponto novoPonto) {
         double dX = novoPonto.x - this.pontoInicial.x;
