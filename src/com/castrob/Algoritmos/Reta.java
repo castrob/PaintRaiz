@@ -1,24 +1,28 @@
 package com.castrob.Algoritmos;
 
+import java.awt.*;
+
 public class Reta extends Figura{
 
     public Reta(int[][] matriz, double xInicial, double yInicial, double xFinal, double yFinal, int cor) {
         super(matriz, xInicial, yInicial, xFinal, yFinal, cor);
     }
 
+    public Reta(){ }
+
     /**
      * Metodo para desenhar a reta na tela utilizando o algoritmo DDA
      * Fonte: Slides de Computacao Grafica presentes no SGA
      */
     @Override
-    public void desenharFiguraDDA() {
+    public void desenharFiguraDDA(Graphics g) {
         double dX = this.pontoFinal.x - this.pontoInicial.x;
         double dY = this.pontoFinal.y - this.pontoInicial.y;
         double x = this.pontoInicial.x;
         double y = this.pontoInicial.y;
         int passos;
         // colore o ponto inicial
-        colorirPonto((int)Math.round(x), (int)Math.round(y), 0x000000);
+        colorirPonto((int)Math.round(x), (int)Math.round(y), g);
         if(Math.abs(dX) > Math.abs(dY))
             passos = (int)Math.abs(dX);
         else
@@ -30,7 +34,7 @@ public class Reta extends Figura{
         for(;passos >= 0; passos--) {
             x += xIncr;
             y += yIncr;
-            colorirPonto((int)Math.round(x), (int)Math.round(y), 0x000000);
+            colorirPonto((int)Math.round(x), (int)Math.round(y), g);
         }
     }
 
@@ -40,7 +44,7 @@ public class Reta extends Figura{
      * Fonte: Slides de Computacao Grafica Presentes no SGA
      */
     @Override
-    public void desenharFiguraBresenham() {
+    public void desenharFiguraBresenham(Graphics g) {
         int dX, dY, x, y, i, const1, const2, p, xIncr, yIncr;
 
         dX = (int)Math.round(this.pontoFinal.x - this.pontoInicial.x);
@@ -60,7 +64,7 @@ public class Reta extends Figura{
         }
         x = (int)Math.round(pontoInicial.x);
         y = (int)Math.round(pontoInicial.y);
-        colorirPonto(x, y, 0x000000);
+        colorirPonto(x, y, g);
 
         if(dY < dX){
             p = (2 * dY) - dX;
@@ -75,7 +79,7 @@ public class Reta extends Figura{
                     y += yIncr;
                     p += const2;
                 }
-                colorirPonto(x, y, 0x000000);
+                colorirPonto(x, y, g);
             }
         }else{
             p = (2 * dX) - dY;
@@ -90,7 +94,7 @@ public class Reta extends Figura{
                     x += xIncr;
                     p += const2;
                 }
-                colorirPonto(x, y, 0x000000);
+                colorirPonto(x, y, g);
             }
         }
     }

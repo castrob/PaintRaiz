@@ -1,8 +1,10 @@
 package com.castrob;
 
+import com.castrob.GUI.PaintRaiz;
+
 public class Main {
 
     public static void main(String[] args) {
-	// write your code here
+        PaintRaiz paintRaiz = new PaintRaiz();
     }
 }
