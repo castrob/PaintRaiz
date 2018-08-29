@@ -117,7 +117,7 @@ public class Reta extends Figura{
 
         moverFigura(new Ponto(0, 0));
 
-        grau = Math.toRadians(grau);
+//        grau = Math.toRadians(grau);
 
         this.pontoFinal = new Ponto(
                 ((Math.round(this.pontoFinal.x)*Math.cos(grau)) - (Math.round(this.pontoFinal.y) * Math.sin(grau))),

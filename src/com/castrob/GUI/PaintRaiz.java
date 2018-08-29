@@ -15,7 +15,7 @@ public class PaintRaiz extends Frame {
     private static final int kControlA = 65;
     private static final int kControlB = 66;
     private static final int kControlD = 68;
-    private static final int kControlC = 67;
+    private static final int kControlN = 78;
     private static final int kControlR = 82;
     private static final int kControlP = 80;
     private static final int kControlT = 84;
@@ -25,14 +25,43 @@ public class PaintRaiz extends Frame {
 
     //Painel onde tem o desenho (Visor ?)
     private DrawingPanel panel;
+    private Panel painelFerramentas;
 
     public PaintRaiz (){
         super("PaintRaiz - ComputacaoGrafica - TP1");
+        Dimension d = new Dimension(800, 720);
+        this.setPreferredSize(d);
+        this.setVisible(true);
+
         addMenu();
         addPanel();
+        addTestPanel();
+        this.pack();
         this.addWindowListener(new WindowHandler());
-        this.setSize(400, 400);
-        this.setVisible(true);
+    }
+
+    public void addTestPanel(){
+        painelFerramentas = new Panel();
+        painelFerramentas.setBackground(Color.gray);
+        painelFerramentas.setSize(Toolkit.getDefaultToolkit().getScreenSize().width, 50);
+        painelFerramentas.setLocation(4, 54);
+        this.add(painelFerramentas);
+
+        //Buttons
+        Button retaDDA = new Button("Reta DDA");
+        Button retaBresenham = new Button("Reta Bresenham");
+        Button circunferenciaBresenham = new Button("Circunferencia Bresenham");
+
+
+        //Handlers
+        retaDDA.addActionListener(new WindowHandler());
+        retaBresenham.addActionListener(new WindowHandler());
+        circunferenciaBresenham.addActionListener(new WindowHandler());
+
+        //Adicionando ao Painel de ferramentas
+        painelFerramentas.add(retaBresenham, BorderLayout.CENTER);
+        painelFerramentas.add(retaDDA, BorderLayout.WEST);
+        painelFerramentas.add(circunferenciaBresenham, BorderLayout.WEST);
     }
 
     private void addPanel() {
@@ -41,11 +70,9 @@ public class PaintRaiz extends Frame {
         Insets ins = this.insets();
         d.height = d.height - ins.top - ins.bottom;
         d.width = d.width - ins.left - ins.right;
-
-        panel.setSize(d);
-        panel.setLocation(ins.left, ins.top);
+        panel.setSize(Toolkit.getDefaultToolkit().getScreenSize());
+        panel.setLocation(ins.left, ins.top + 56);
         panel.setBackground(Color.white);
-
         panel.addMouseListener(panel);
         this.add(panel);
     }
@@ -59,6 +86,7 @@ public class PaintRaiz extends Frame {
         Menu sobre = new Menu("Sobre");
 
         arquivo.add(new MenuItem("Sair", new MenuShortcut(kControlX))).addActionListener(new WindowHandler());
+        arquivo.add(new MenuItem("Limpar", new MenuShortcut(kControlN))).addActionListener(new WindowHandler());
         algoritmosReta.add(new MenuItem("Reta DDA", new MenuShortcut(kControlD))).addActionListener(new WindowHandler());
         algoritmosReta.add(new MenuItem("Reta Bresenham", new MenuShortcut(kControlB))).addActionListener(new WindowHandler());
         algoritmosReta.add(new MenuItem("Transladar Reta")).addActionListener(new WindowHandler());
@@ -110,10 +138,12 @@ public class PaintRaiz extends Frame {
                 for(int i = 0; i < menu.getItemCount(); menu.getItem(i).setEnabled(true), i++);
                 getMenuBar().getShortcutMenuItem(new MenuShortcut(kControlB)).setEnabled(true);
                 panel.desenharReta(reta, 1);
+            }else if(acao.equalsIgnoreCase("Limpar")){
+                panel.clear();
             }else if(acao.equalsIgnoreCase("Sobre")){
                 JOptionPane.showMessageDialog(null, "TP1 - Computacao Paralela\n Joao Castro - 562874", "About", JOptionPane.PLAIN_MESSAGE);
             }else {
-                JOptionPane.showMessageDialog(null, "Voce clickou em " + e.getActionCommand(), "PaintRaiz", JOptionPane.PLAIN_MESSAGE);
+                JOptionPane.showMessageDialog(null, e.getActionCommand() + " Ainda não implementado!" , "PaintRaiz", JOptionPane.PLAIN_MESSAGE);
             }
         }
     }
@@ -126,6 +156,12 @@ public class PaintRaiz extends Frame {
         ArrayList<Figura> figuraList = new ArrayList<Figura>();
         int pos = 0;
 
+        public void clear(){
+            pontoFinal = pontoInicial = null;
+            figura = null;
+            figuraList.clear();
+            repaint();
+        }
         public void paint(Graphics g){
             g.setColor(Color.BLACK);
             if(algoritmo == 0 && !(figuraList.size() == 0)){
@@ -145,10 +181,10 @@ public class PaintRaiz extends Frame {
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            if(pontoInicial == null){
+            if(figura != null && pontoInicial == null){
                 pontoInicial = new Ponto(e.getPoint().getX(), e.getPoint().getY());
                 figura.pontoInicial = pontoInicial;
-            }else if(pontoFinal == null){
+            }else if(figura != null && pontoFinal == null){
                 pontoFinal = new Ponto(e.getPoint().getX(), e.getPoint().getY());
                 figura.pontoFinal = pontoFinal;
                 figuraList.add(figura);
