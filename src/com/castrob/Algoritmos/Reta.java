@@ -1,24 +1,33 @@
 package com.castrob.Algoritmos;
 
 import java.awt.*;
-import java.util.ArrayList;
+
+/**
+ * Classe de implementação de uma Reta como uma figura
+ * Algoritmos de formacao da reta:
+ *    Reta DDA
+ *    Reta Bresenham
+ * Algoritmo de Manipulação da reta:
+ *    Translação
+ *    Rotação
+ *    Escala
+ */
 
 public class Reta extends Figura{
 
-    public Reta(int[][] matriz, double xInicial, double yInicial, double xFinal, double yFinal, int cor) {
-        super(matriz, xInicial, yInicial, xFinal, yFinal, cor);
+    /**
+     * Construtor Padrao para Criacao da Reta
+     * @param xInicial - Valor que sera atribuido para o pontoInicial.x
+     * @param yInicial - Valor que sera atribuido para o pontoInicial.y
+     * @param xFinal - Valor que sera atribuido para o pontoFinal.x
+     * @param yFinal - Valor que sera atribuido para o pontoFinal.y
+     * @param cor - cor para desenho da reta
+     */
+    public Reta(double xInicial, double yInicial, double xFinal, double yFinal, Color cor) {
+        super(xInicial, yInicial, xFinal, yFinal, cor);
     }
 
     public Reta(){ }
-
-    @Override
-    public void desenharFiguraDDA(ArrayList<Figura> figuras, Graphics g) {
-        for(Figura f : figuras){
-            this.pontoFinal = f.pontoFinal.clone();
-            this.pontoInicial = f.pontoInicial.clone();
-            desenharFiguraDDA(g);
-        }
-    }
 
     /**
      * Metodo para desenhar a reta na tela utilizando o algoritmo DDA
@@ -110,25 +119,33 @@ public class Reta extends Figura{
     }
 
 
-
+    /**
+     * Metodo de rotacao por grau, utilizando a simplificacao da matriz de rotacao
+     * @param grau - grau de rotacao
+     */
     @Override
     public void rotacionarFigura(double grau) {
         Ponto pontoOriginal = this.pontoInicial.clone();
-
         moverFigura(new Ponto(0, 0));
+        grau = Math.toRadians(grau);
 
-//        grau = Math.toRadians(grau);
+        Ponto novoPontoFinal = new Ponto(
+                (this.pontoFinal.x*Math.cos(grau)) - (this.pontoFinal.y * Math.sin(grau)),
+                (this.pontoFinal.x*Math.sin(grau)) + (this.pontoFinal.y * Math.cos(grau)));
 
-        this.pontoFinal = new Ponto(
-                ((Math.round(this.pontoFinal.x)*Math.cos(grau)) - (Math.round(this.pontoFinal.y) * Math.sin(grau))),
-                ((Math.round(this.pontoFinal.x)*Math.sin(grau)) + (Math.round(this.pontoFinal.y) * Math.cos(grau))));
+        this.pontoFinal = novoPontoFinal;
 
         moverFigura(pontoOriginal);
-
     }
-    //TODO Verificar pontoOriginal (inicial, final)
+
+    /**
+     * Metodo para alterar a escala da figura multiplicando cada um
+     * dos parametros com o seu ponto final
+     * @param escalaX - fator de escala em relacao a x
+     * @param escalaY - fator de escala em ralacao a y
+     */
     @Override
-    public void mudarEscalaFigura(double escala) {
+    public void mudarEscalaFigura(double escalaX, double escalaY) {
         //Armazena a posicao inicial da linha
         Ponto pontoOriginal = this.pontoInicial.clone();
 
@@ -136,7 +153,9 @@ public class Reta extends Figura{
         moverFigura(new Ponto(0, 0));
 
         //Alterando a escala corretamente
-        this.pontoFinal = new Ponto(Math.round(this.pontoFinal.x * escala), Math.round(this.pontoFinal.y * escala));
+        Ponto novoPontoFinal = new Ponto(Math.round(this.pontoFinal.x * escalaX), Math.round(this.pontoFinal.y * escalaY));
+
+        this.pontoFinal = novoPontoFinal;
 
         //Aplicando a translacao para o ponto original
         moverFigura(pontoOriginal);
@@ -146,14 +165,13 @@ public class Reta extends Figura{
      * Metodo de Translacao T(a,b)
      * @param novoPonto Ponto do Mouse (x,y)
      */
-    //TODO Verficiar se esta' correto!!!
     @Override
     public void moverFigura(Ponto novoPonto) {
         double dX = novoPonto.x - this.pontoInicial.x;
-        double dY = novoPonto.y - this.pontoFinal.y;
+        double dY = novoPonto.y - this.pontoInicial.y;
 
         this.pontoInicial = new Ponto(this.pontoInicial.x + dX, this.pontoInicial.y + dY);
-        this.pontoFinal = new Ponto(this.pontoFinal.x + dY, this.pontoFinal.y + dY);
+        this.pontoFinal = new Ponto(this.pontoFinal.x + dX, this.pontoFinal.y + dY);
     }
 
 }

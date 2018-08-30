@@ -1,5 +1,6 @@
 package com.castrob.GUI;
 
+import com.castrob.Algoritmos.Circunferencia;
 import com.castrob.Algoritmos.Figura;
 import com.castrob.Algoritmos.Ponto;
 import com.castrob.Algoritmos.Reta;
@@ -20,6 +21,7 @@ public class PaintRaiz extends Frame {
     private static final int kControlP = 80;
     private static final int kControlT = 84;
     private static final int kControlX = 88;
+
 
     //Objeto Reta para ser plotado
 
@@ -45,23 +47,33 @@ public class PaintRaiz extends Frame {
         painelFerramentas.setBackground(Color.gray);
         painelFerramentas.setSize(Toolkit.getDefaultToolkit().getScreenSize().width, 50);
         painelFerramentas.setLocation(4, 54);
-        this.add(painelFerramentas);
 
         //Buttons
         Button retaDDA = new Button("Reta DDA");
         Button retaBresenham = new Button("Reta Bresenham");
         Button circunferenciaBresenham = new Button("Circunferencia Bresenham");
-
+        Button rotacionar = new Button("Rotacionar");
+        TextField grauRotacao = new TextField("0.0");
+        Button escalar = new Button("Escalar");
+        TextField tamanhoEscala = new TextField("0.0");
 
         //Handlers
         retaDDA.addActionListener(new WindowHandler());
         retaBresenham.addActionListener(new WindowHandler());
         circunferenciaBresenham.addActionListener(new WindowHandler());
+        rotacionar.addActionListener(new WindowHandler());
+        escalar.addActionListener(new WindowHandler());
 
         //Adicionando ao Painel de ferramentas
-        painelFerramentas.add(retaBresenham, BorderLayout.CENTER);
-        painelFerramentas.add(retaDDA, BorderLayout.WEST);
-        painelFerramentas.add(circunferenciaBresenham, BorderLayout.WEST);
+        painelFerramentas.add(retaBresenham);
+        painelFerramentas.add(retaDDA);
+        painelFerramentas.add(circunferenciaBresenham);
+        painelFerramentas.add(rotacionar);
+        painelFerramentas.add(grauRotacao);
+        painelFerramentas.add(escalar);
+        painelFerramentas.add(tamanhoEscala);
+
+        this.add(painelFerramentas);
     }
 
     private void addPanel() {
@@ -109,7 +121,7 @@ public class PaintRaiz extends Frame {
         }
     }
 
-    private class WindowHandler extends WindowAdapter implements ActionListener {
+    private class WindowHandler extends WindowAdapter implements ActionListener{
         /**
          * Listener para quando clicar em X da janela
          * @param e
@@ -125,6 +137,7 @@ public class PaintRaiz extends Frame {
         @Override
         public void actionPerformed(ActionEvent e) {
             Reta reta = new Reta();
+            Circunferencia circunferencia = new Circunferencia();
             String acao = e.getActionCommand();
             if(acao.equalsIgnoreCase("sair")){
                 System.exit(0);
@@ -140,6 +153,9 @@ public class PaintRaiz extends Frame {
                 panel.desenharReta(reta, 1);
             }else if(acao.equalsIgnoreCase("Limpar")){
                 panel.clear();
+            }else if(acao.equalsIgnoreCase("Rotacionar")){
+                TextField rotacao = (TextField)painelFerramentas.getComponent(4);
+                panel.rotacionarSelecao(Double.parseDouble(rotacao.getText()));
             }else if(acao.equalsIgnoreCase("Sobre")){
                 JOptionPane.showMessageDialog(null, "TP1 - Computacao Paralela\n Joao Castro - 562874", "About", JOptionPane.PLAIN_MESSAGE);
             }else {
@@ -213,5 +229,13 @@ public class PaintRaiz extends Frame {
 
         }
 
+        public void rotacionarSelecao(double grau) {
+            if(!(figuraList.size() == 0)){
+               for(Figura f : figuraList){
+                   f.rotacionarFigura(grau);
+               }
+            }
+            repaint();
+        }
     }
 }
