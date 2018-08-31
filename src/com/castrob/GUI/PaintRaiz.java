@@ -1,168 +1,183 @@
 package com.castrob.GUI;
 
-import com.castrob.Algoritmos.Circunferencia;
 import com.castrob.Algoritmos.Figura;
 import com.castrob.Algoritmos.Ponto;
-import com.castrob.Algoritmos.Reta;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
-public class PaintRaiz extends Frame {
-
-    //Constantes para atalhos no menu
-    private static final int kControlA = 65;
-    private static final int kControlB = 66;
-    private static final int kControlD = 68;
-    private static final int kControlN = 78;
-    private static final int kControlR = 82;
-    private static final int kControlP = 80;
-    private static final int kControlT = 84;
-    private static final int kControlX = 88;
-
-
-    //Objeto Reta para ser plotado
+public class PaintRaiz extends JFrame {
 
     //Painel onde tem o desenho (Visor ?)
-    private DrawingPanel panel;
-    private Panel painelFerramentas;
+    private DrawingPanel drawingPanel = new DrawingPanel();
+    private JPanel painelFerramentas = new JPanel();
+    private ArrayList<JRadioButton> buttons = new ArrayList<>();
 
-    public PaintRaiz (){
+    public PaintRaiz(){
         super("PaintRaiz - ComputacaoGrafica - TP1");
-        Dimension d = new Dimension(800, 720);
-        this.setPreferredSize(d);
-        this.setVisible(true);
+        //Configurando o Layout Principal
+        GridBagLayout gridLayout = new GridBagLayout();
+        setLayout(gridLayout);
+        painelFerramentas.setLayout(new GridBagLayout());
 
-        addMenu();
-        addPanel();
-        addTestPanel();
-        this.pack();
-        this.addWindowListener(new WindowHandler());
-    }
+        //Constraints
+        GridBagConstraints c = new GridBagConstraints();
+        GridBagConstraints cGroup = new GridBagConstraints();
+        GridBagConstraints cItem = new GridBagConstraints();
 
-    public void addTestPanel(){
-        painelFerramentas = new Panel();
-        painelFerramentas.setBackground(Color.gray);
-        painelFerramentas.setSize(Toolkit.getDefaultToolkit().getScreenSize().width, 50);
-        painelFerramentas.setLocation(4, 54);
+        //Labels
+        JLabel rLabel = new JLabel("Retas");
+        JLabel cLabel = new JLabel("Circunferencia");
+        JLabel tLabel = new JLabel("Transformações");
+        JLabel clipLabel = new JLabel("Recorte");
+
+        //Panels
+        JPanel rPanel = new JPanel(new GridBagLayout());
+        JPanel cPanel = new JPanel(new GridBagLayout());
+        JPanel tPanel = new JPanel(new GridBagLayout());
+        JPanel clipPanel = new JPanel(new GridBagLayout());
 
         //Buttons
-        Button retaDDA = new Button("Reta DDA");
-        Button retaBresenham = new Button("Reta Bresenham");
-        Button circunferenciaBresenham = new Button("Circunferencia Bresenham");
-        Button rotacionar = new Button("Rotacionar");
-        TextField grauRotacao = new TextField("0.0");
-        Button escalar = new Button("Escalar");
-        TextField tamanhoEscala = new TextField("0.0");
+        JRadioButton rDDA = new JRadioButton("DDA");
+        JRadioButton rBresenham = new JRadioButton("Bresenham");
+        JRadioButton cBresenham = new JRadioButton("Bresenham(Circ.)");
+        JRadioButton clipLiangBarsky = new JRadioButton("Liang-Barsky");
+        JRadioButton clipCohenSutherLand = new JRadioButton("Cohen-Sutherland");
+        JRadioButton rotacionar = new JRadioButton("Rotacionar");
+        JRadioButton mover = new JRadioButton("Mover");
+        JRadioButton redimencionar = new JRadioButton("Redimencionar");
 
-        //Handlers
-        retaDDA.addActionListener(new WindowHandler());
-        retaBresenham.addActionListener(new WindowHandler());
-        circunferenciaBresenham.addActionListener(new WindowHandler());
-        rotacionar.addActionListener(new WindowHandler());
-        escalar.addActionListener(new WindowHandler());
 
-        //Adicionando ao Painel de ferramentas
-        painelFerramentas.add(retaBresenham);
-        painelFerramentas.add(retaDDA);
-        painelFerramentas.add(circunferenciaBresenham);
-        painelFerramentas.add(rotacionar);
-        painelFerramentas.add(grauRotacao);
-        painelFerramentas.add(escalar);
-        painelFerramentas.add(tamanhoEscala);
+        //Listeners
+        rDDA.addActionListener(new ButtonListener());
+        rBresenham.addActionListener(new ButtonListener());
+        cBresenham.addActionListener(new ButtonListener());
+        mover.addActionListener(new ButtonListener());
+        rotacionar.addActionListener(new ButtonListener());
+        redimencionar.addActionListener(new ButtonListener());
+        clipCohenSutherLand.addActionListener(new ButtonListener());
+        clipLiangBarsky.addActionListener(new ButtonListener());
 
-        this.add(painelFerramentas);
+        //Filling the button list
+        buttons.add(rDDA);
+        buttons.add(rBresenham);
+        buttons.add(cBresenham);
+        buttons.add(mover);
+        buttons.add(rotacionar);
+        buttons.add(redimencionar);
+        buttons.add(clipCohenSutherLand);
+        buttons.add(clipLiangBarsky);
+
+
+        // Configurando Painel de Ferramentas
+        // Panel de Retas
+        cItem.gridx = 0;
+        cItem.gridy = 0;
+        cItem.anchor = GridBagConstraints.NORTHWEST;
+        cItem.insets = new Insets(0,0,10,5);
+        rPanel.add(rLabel, cItem);
+
+        //Botao para Reta DDA
+        cItem.gridy++;
+        cItem.insets = new Insets(0,0,5,0);
+        rPanel.add(rDDA, cItem);
+
+        //Botao para Reta Bresenham
+        cItem.gridy++;
+        cItem.insets = new Insets(0,0,0,0);
+        rPanel.add(rBresenham, cItem);
+
+        cGroup.gridx = 0;
+        cGroup.gridy = 0;
+        cGroup.anchor = GridBagConstraints.NORTHWEST;
+        cGroup.insets = new Insets(10,10,10,10);
+        painelFerramentas.add(rPanel, cGroup);
+
+        cItem.gridx = 0;
+        cItem.gridy = 0;
+        cItem.anchor = GridBagConstraints.NORTHWEST;
+        cItem.insets = new Insets(0,0,10,5);
+        cPanel.add(cLabel, cItem);
+
+        cItem.gridy++;
+        cItem.insets = new Insets(0, 0 ,0, 0);
+        cPanel.add(cBresenham, cItem);
+
+        cGroup.gridy++;
+        painelFerramentas.add(cPanel, cGroup);
+
+        //Adicionando Ferramentas de Transformacao
+        cItem.gridx = 0;
+        cItem.gridy = 0;
+        cItem.anchor = GridBagConstraints.NORTHWEST;
+        cItem.insets = new Insets(0,0,10,5);
+        tPanel.add(tLabel, cItem);
+
+        cItem.gridy++;
+        cItem.insets = new Insets(0, 0, 5, 0);
+        tPanel.add(mover, cItem);
+
+        cItem.gridy++;
+        cItem.insets = new Insets(0, 0, 5, 0);
+        tPanel.add(rotacionar, cItem);
+
+        cItem.gridy++;
+        cItem.insets = new Insets(0, 0, 0, 0);
+        tPanel.add(redimencionar, cItem);
+
+        cGroup.gridy++;
+        painelFerramentas.add(tPanel, cGroup);
+
+        cItem.gridx = 0;
+        cItem.gridy = 0;
+        cItem.anchor = GridBagConstraints.NORTHWEST;
+        cItem.insets = new Insets(0,0,10,5);
+        clipPanel.add(clipLabel, cItem);
+
+        cItem.gridy++;
+        cItem.insets = new Insets(0,0,5,0);
+        clipPanel.add(clipCohenSutherLand, cItem);
+
+        cItem.gridy++;
+        cItem.insets = new Insets(0,0,0,0);
+        clipPanel.add(clipLiangBarsky, cItem);
+
+        cGroup.gridy++;
+        painelFerramentas.add(clipPanel, cGroup);
+
+        cGroup.gridy++;
+        cGroup.weightx = cGroup.weighty = 1.0;
+        cGroup.insets = new Insets(0,0,0,0);
+        cGroup.fill = GridBagConstraints.BOTH;
+        painelFerramentas.add(new JPanel(new GridBagLayout()), cGroup);
+
+        painelFerramentas.validate();
+
+        c.gridx = 0;
+        c.gridy = 0;
+        c.weighty = 1.0;
+        c.fill = GridBagConstraints.VERTICAL;
+
+        add(painelFerramentas, c);
+
+        c.gridx = 1;
+        c.weightx = 1.0;
+        c.fill = GridBagConstraints.BOTH;
+
+        add(drawingPanel, c);
+
+        //Definindo preferencias
+        drawingPanel.setBackground(Color.white);
+        drawingPanel.addMouseListener(drawingPanel);
+        Dimension d = new Dimension(600, 500);
+
+        setPreferredSize(d);
+        pack();
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
-    private void addPanel() {
-        panel = new DrawingPanel();
-        Dimension d = this.getSize();
-        Insets ins = this.insets();
-        d.height = d.height - ins.top - ins.bottom;
-        d.width = d.width - ins.left - ins.right;
-        panel.setSize(Toolkit.getDefaultToolkit().getScreenSize());
-        panel.setLocation(ins.left, ins.top + 56);
-        panel.setBackground(Color.white);
-        panel.addMouseListener(panel);
-        this.add(panel);
-    }
-
-
-    private void addMenu() {
-        MenuBar menuBar = new MenuBar();
-        Menu arquivo = new Menu("Arquivo");
-        Menu algoritmosReta = new Menu("Algortimos Reta");
-        Menu algoritmosCircunferencia = new Menu("Algortimos Circunferencia");
-        Menu sobre = new Menu("Sobre");
-
-        arquivo.add(new MenuItem("Sair", new MenuShortcut(kControlX))).addActionListener(new WindowHandler());
-        arquivo.add(new MenuItem("Limpar", new MenuShortcut(kControlN))).addActionListener(new WindowHandler());
-        algoritmosReta.add(new MenuItem("Reta DDA", new MenuShortcut(kControlD))).addActionListener(new WindowHandler());
-        algoritmosReta.add(new MenuItem("Reta Bresenham", new MenuShortcut(kControlB))).addActionListener(new WindowHandler());
-        algoritmosReta.add(new MenuItem("Transladar Reta")).addActionListener(new WindowHandler());
-        algoritmosReta.add(new MenuItem("Rotacionar Reta")).addActionListener(new WindowHandler());
-        algoritmosReta.add(new MenuItem("Escalar Reta")).addActionListener(new WindowHandler());
-
-        algoritmosCircunferencia.add(new MenuItem("Circunferencia Bresenham")).addActionListener(new WindowHandler());
-        algoritmosCircunferencia.add(new MenuItem("Transladar Circunferencia")).addActionListener(new WindowHandler());
-        algoritmosCircunferencia.add(new MenuItem("Rotacionar Circunferencia")).addActionListener(new WindowHandler());
-        algoritmosCircunferencia.add(new MenuItem("Escalar Circunferencia")).addActionListener(new WindowHandler());
-
-        sobre.add(new MenuItem("Sobre")).addActionListener(new WindowHandler());
-        menuBar.add(arquivo);
-        menuBar.add(algoritmosReta);
-        menuBar.add(algoritmosCircunferencia);
-        menuBar.add(sobre);
-
-        if(this.getMenuBar() == null){
-            this.setMenuBar(menuBar);
-        }
-    }
-
-    private class WindowHandler extends WindowAdapter implements ActionListener{
-        /**
-         * Listener para quando clicar em X da janela
-         * @param e
-         */
-        public void windowClosing(WindowEvent e){
-            System.exit(0);
-        }
-
-        /**
-         * Metodo que irá lidar com o click dos menus
-         * @param e ActionEvent
-         */
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            Reta reta = new Reta();
-            Circunferencia circunferencia = new Circunferencia();
-            String acao = e.getActionCommand();
-            if(acao.equalsIgnoreCase("sair")){
-                System.exit(0);
-            }else if(acao.equalsIgnoreCase("Reta DDA")){
-                Menu menu = getMenuBar().getMenu(1);
-                for(int i = 0; i < menu.getItemCount(); menu.getItem(i).setEnabled(true), i++);
-                getMenuBar().getShortcutMenuItem(new MenuShortcut(kControlD)).setEnabled(true);
-                panel.desenharReta(reta, 0);
-            }else if(acao.equalsIgnoreCase("Reta Bresenham")){
-                Menu menu = getMenuBar().getMenu(1);
-                for(int i = 0; i < menu.getItemCount(); menu.getItem(i).setEnabled(true), i++);
-                getMenuBar().getShortcutMenuItem(new MenuShortcut(kControlB)).setEnabled(true);
-                panel.desenharReta(reta, 1);
-            }else if(acao.equalsIgnoreCase("Limpar")){
-                panel.clear();
-            }else if(acao.equalsIgnoreCase("Rotacionar")){
-                TextField rotacao = (TextField)painelFerramentas.getComponent(4);
-                panel.rotacionarSelecao(Double.parseDouble(rotacao.getText()));
-            }else if(acao.equalsIgnoreCase("Sobre")){
-                JOptionPane.showMessageDialog(null, "TP1 - Computacao Paralela\n Joao Castro - 562874", "About", JOptionPane.PLAIN_MESSAGE);
-            }else {
-                JOptionPane.showMessageDialog(null, e.getActionCommand() + " Ainda não implementado!" , "PaintRaiz", JOptionPane.PLAIN_MESSAGE);
-            }
-        }
-    }
 
     private class DrawingPanel extends Panel implements MouseListener {
         private Ponto pontoInicial = null;
@@ -219,6 +234,17 @@ public class PaintRaiz extends Frame {
 
         }
 
+
+        public void rotacionarSelecao(double grau) {
+            if(!(figuraList.size() == 0)){
+               for(Figura f : figuraList){
+                   f.rotacionarFigura(grau);
+               }
+            }
+            repaint();
+        }
+
+
         @Override
         public void mouseEntered(MouseEvent e) {
 
@@ -228,14 +254,45 @@ public class PaintRaiz extends Frame {
         public void mouseExited(MouseEvent e) {
 
         }
+    }
 
-        public void rotacionarSelecao(double grau) {
-            if(!(figuraList.size() == 0)){
-               for(Figura f : figuraList){
-                   f.rotacionarFigura(grau);
-               }
+    private class ButtonListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            switch (e.getActionCommand()){
+                case "DDA":
+                        limparSelecionados(buttons.indexOf(e.getSource()));
+                    break;
+                case "Bresenham":
+                        limparSelecionados(buttons.indexOf(e.getSource()));
+                    break;
+                case "Bresenham(Circ.)":
+                        limparSelecionados(buttons.indexOf(e.getSource()));
+                    break;
+                case "Mover":
+                        limparSelecionados(buttons.indexOf(e.getSource()));
+                    break;
+                case "Rotacionar":
+                        limparSelecionados(buttons.indexOf(e.getSource()));
+                    break;
+                case "Redimencionar":
+                        limparSelecionados(buttons.indexOf(e.getSource()));
+                    break;
+                case "Cohen-Sutherland":
+                        limparSelecionados(buttons.indexOf(e.getSource()));
+                    break;
+                case "Liang-Barsky":
+                        limparSelecionados(buttons.indexOf(e.getSource()));
+                    break;
+
             }
-            repaint();
+        }
+
+        public void limparSelecionados(int index){
+            for(int i = 0; i < buttons.size(); i++)
+                if(i != index)
+                    buttons.get(i).setSelected(false);
         }
     }
 }

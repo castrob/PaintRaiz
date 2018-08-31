@@ -1,11 +1,13 @@
 package com.castrob.Algoritmos;
 
+import javax.swing.*;
 import java.awt.*;
 
 public abstract class Figura {
 
     public Ponto pontoInicial, pontoFinal;
     public Color cor;
+    public boolean isCircunferencia;
 
     public Figura(double xInicial, double yInicial, double xFinal, double yFinal, Color cor) {
         this.pontoInicial = new Ponto( xInicial, yInicial);
@@ -17,6 +19,12 @@ public abstract class Figura {
         this.pontoFinal = null;
         this.pontoInicial = null;
         this.cor = Color.black;
+        this.isCircunferencia = false;}
+    public Figura(boolean isCircunferencia){
+        this.pontoFinal = null;
+        this.pontoInicial = null;
+        this.cor = Color.black;
+        this.isCircunferencia = isCircunferencia;
     }
 
     public void colorirPonto (int x, int y, Graphics g){
