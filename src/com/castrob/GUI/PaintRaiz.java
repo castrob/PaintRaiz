@@ -1,7 +1,9 @@
 package com.castrob.GUI;
 
+import com.castrob.Algoritmos.Circunferencia;
 import com.castrob.Algoritmos.Figura;
 import com.castrob.Algoritmos.Ponto;
+import com.castrob.Algoritmos.Reta;
 
 import javax.swing.*;
 import java.awt.*;
@@ -179,49 +181,60 @@ public class PaintRaiz extends JFrame {
     }
 
 
-    private class DrawingPanel extends Panel implements MouseListener {
+    private class DrawingPanel extends Panel implements MouseListener{
+        private static final int RETA = 0;
+        private static final int CIRCUNFERENCIA = 1;
+        private boolean isDefaultAlgorithm = true;
         private Ponto pontoInicial = null;
         private Ponto pontoFinal = null;
         private Figura figura = null;
-        private int algoritmo = 0;
-        ArrayList<Figura> figuraList = new ArrayList<Figura>();
-        int pos = 0;
+        //Todas as figuras inseridas na tela
+        ArrayList<Figura> figuras = new ArrayList<>();
 
-        public void clear(){
-            pontoFinal = pontoInicial = null;
-            figura = null;
-            figuraList.clear();
+        /**
+         * Metodo Paint default da classe Panel desenha todas as figuras
+         * utilizando por default o algoritmo de Bresenham
+         * @param g - Graphics object
+         */
+        @Override
+        public void paint(Graphics g) {
+            super.paint(g);
+            if(!figuras.isEmpty()){
+                if(isDefaultAlgorithm){
+                    for(Figura f : figuras)
+                        f.desenharFiguraBresenham(g);
+                }else{
+                    for(Figura f : figuras)
+                        f.desenharFiguraDDA(g);
+                }
+            }
+        }
+
+        /**
+         * Metodo a ser chamado por classes superiores para inserir nova figura
+         * @param figura - Objeto referencia a ser adicionado
+         * @param key - RETA - 0, CIRCUNFERENCIA - 1
+         * @param algorithm DDA - 0, BRESENHAM - 1
+         */
+        public void desenharFigura(Figura figura, int key, int algorithm){
+            if(figura != null){
+                if(key == CIRCUNFERENCIA){
+                    this.figura = new Circunferencia();
+                    this.isDefaultAlgorithm = true;
+                }else if(algorithm == 0){
+                    this.figura = new Reta();
+                    this.isDefaultAlgorithm = false;
+                }
+            }
+        }
+
+        private void updatePaint() {
             repaint();
-        }
-        public void paint(Graphics g){
-            g.setColor(Color.BLACK);
-            if(algoritmo == 0 && !(figuraList.size() == 0)){
-                for(Figura f : figuraList)
-                    f.desenharFiguraDDA(g);
-            }
-            else if(algoritmo == 1 && figura != null){
-                for(Figura f : figuraList)
-                    f.desenharFiguraBresenham(g);
-            }
-        }
-
-        public void desenharReta(Figura figura, int opcode) {
-            this.figura = figura;
-            this.algoritmo = opcode;
         }
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            if(figura != null && pontoInicial == null){
-                pontoInicial = new Ponto(e.getPoint().getX(), e.getPoint().getY());
-                figura.pontoInicial = pontoInicial;
-            }else if(figura != null && pontoFinal == null){
-                pontoFinal = new Ponto(e.getPoint().getX(), e.getPoint().getY());
-                figura.pontoFinal = pontoFinal;
-                figuraList.add(figura);
-                repaint();
-                pontoFinal = pontoInicial = null;
-            }
+
         }
 
         @Override
@@ -233,17 +246,6 @@ public class PaintRaiz extends JFrame {
         public void mouseReleased(MouseEvent e) {
 
         }
-
-
-        public void rotacionarSelecao(double grau) {
-            if(!(figuraList.size() == 0)){
-               for(Figura f : figuraList){
-                   f.rotacionarFigura(grau);
-               }
-            }
-            repaint();
-        }
-
 
         @Override
         public void mouseEntered(MouseEvent e) {

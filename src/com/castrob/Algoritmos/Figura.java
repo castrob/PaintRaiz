@@ -13,6 +13,7 @@ public abstract class Figura {
         this.pontoInicial = new Ponto( xInicial, yInicial);
         this.pontoFinal = new Ponto( xFinal, yFinal);
         this.cor = cor;
+        this.isCircunferencia = false;
     }
 
     public Figura(){

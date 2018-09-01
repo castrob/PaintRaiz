@@ -12,13 +12,16 @@ public class Circunferencia extends Figura {
         super(xInicial, yInicial, xFinal, yFinal, cor);
     }
 
-    public Circunferencia() { }
+    public Circunferencia() {
+        this.isCircunferencia = true;
+    }
 
     @Override
     public void desenharFiguraDDA(Graphics g) {}
 
     @Override
     public void desenharFiguraBresenham(Graphics g) {
+        this.isCircunferencia = true;
         double r = Math.sqrt(Math.pow((pontoFinal.x - pontoInicial.x),2) + Math.pow((pontoFinal.y - pontoInicial.y), 2));
         double x = 0.0;
         double y = r;

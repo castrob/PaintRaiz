@@ -125,17 +125,20 @@ public class Reta extends Figura{
      */
     @Override
     public void rotacionarFigura(double grau) {
-        Ponto pontoOriginal = this.pontoInicial.clone();
-        moverFigura(new Ponto(0, 0));
-        grau = Math.toRadians(grau);
+        if(!this.isCircunferencia){
+            Ponto pontoOriginal = this.pontoInicial.clone();
+            moverFigura(new Ponto(0, 0));
+            grau = Math.toRadians(grau);
 
-        Ponto novoPontoFinal = new Ponto(
-                (this.pontoFinal.x*Math.cos(grau)) - (this.pontoFinal.y * Math.sin(grau)),
-                (this.pontoFinal.x*Math.sin(grau)) + (this.pontoFinal.y * Math.cos(grau)));
+            Ponto novoPontoFinal = new Ponto(
+                    (this.pontoFinal.x*Math.cos(grau)) - (this.pontoFinal.y * Math.sin(grau)),
+                    (this.pontoFinal.x*Math.sin(grau)) + (this.pontoFinal.y * Math.cos(grau)));
 
-        this.pontoFinal = novoPontoFinal;
+            this.pontoFinal = novoPontoFinal;
 
-        moverFigura(pontoOriginal);
+            moverFigura(pontoOriginal);
+        }
+
     }
 
     /**
@@ -146,19 +149,21 @@ public class Reta extends Figura{
      */
     @Override
     public void mudarEscalaFigura(double escalaX, double escalaY) {
-        //Armazena a posicao inicial da linha
-        Ponto pontoOriginal = this.pontoInicial.clone();
+        if(!this.isCircunferencia){
+            //Armazena a posicao inicial da linha
+            Ponto pontoOriginal = this.pontoInicial.clone();
 
-        // aplica a translacao pra origem
-        moverFigura(new Ponto(0, 0));
+            // aplica a translacao pra origem
+            moverFigura(new Ponto(0, 0));
 
-        //Alterando a escala corretamente
-        Ponto novoPontoFinal = new Ponto(Math.round(this.pontoFinal.x * escalaX), Math.round(this.pontoFinal.y * escalaY));
+            //Alterando a escala corretamente
+            Ponto novoPontoFinal = new Ponto(Math.round(this.pontoFinal.x * escalaX), Math.round(this.pontoFinal.y * escalaY));
 
-        this.pontoFinal = novoPontoFinal;
+            this.pontoFinal = novoPontoFinal;
 
-        //Aplicando a translacao para o ponto original
-        moverFigura(pontoOriginal);
+            //Aplicando a translacao para o ponto original
+            moverFigura(pontoOriginal);
+        }
     }
 
     /**
