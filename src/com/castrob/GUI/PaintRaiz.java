@@ -34,12 +34,14 @@ public class PaintRaiz extends JFrame {
         JLabel cLabel = new JLabel("Circunferencia");
         JLabel tLabel = new JLabel("Transformações");
         JLabel clipLabel = new JLabel("Recorte");
+        JLabel optionLabel = new JLabel("Opções");
 
         //Panels
         JPanel rPanel = new JPanel(new GridBagLayout());
         JPanel cPanel = new JPanel(new GridBagLayout());
         JPanel tPanel = new JPanel(new GridBagLayout());
         JPanel clipPanel = new JPanel(new GridBagLayout());
+        JPanel optionPanel = new JPanel(new GridBagLayout());
 
         //Buttons
         JRadioButton rDDA = new JRadioButton("DDA");
@@ -50,6 +52,7 @@ public class PaintRaiz extends JFrame {
         JRadioButton rotacionar = new JRadioButton("Rotacionar");
         JRadioButton mover = new JRadioButton("Mover");
         JRadioButton redimencionar = new JRadioButton("Redimencionar");
+        JButton limparTela = new JButton("Limpar Desenhos");
 
 
         //Listeners
@@ -61,6 +64,7 @@ public class PaintRaiz extends JFrame {
         redimencionar.addActionListener(new ButtonListener());
         clipCohenSutherLand.addActionListener(new ButtonListener());
         clipLiangBarsky.addActionListener(new ButtonListener());
+        limparTela.addActionListener(new ButtonListener());
 
         //Filling the button list
         buttons.add(rDDA);
@@ -148,6 +152,20 @@ public class PaintRaiz extends JFrame {
 
         cGroup.gridy++;
         painelFerramentas.add(clipPanel, cGroup);
+
+        cItem.gridx = 0;
+        cItem.gridy = 0;
+        cItem.anchor = GridBagConstraints.NORTHWEST;
+        cItem.insets = new Insets(0,0,0,0);
+
+        optionPanel.add(optionLabel, cItem);
+
+        cItem.gridy++;
+        cItem.insets = new Insets(0,0,10,0);
+        optionPanel.add(limparTela, cItem);
+
+        cGroup.gridy++;
+        painelFerramentas.add(optionPanel, cGroup);
 
         cGroup.gridy++;
         cGroup.weightx = cGroup.weighty = 1.0;
@@ -339,10 +357,16 @@ public class PaintRaiz extends JFrame {
                 JOptionPane.showMessageDialog(null,"Não há nenhuma figura!");
             }
         }
+
+        public void clear() {
+            this.figuras.clear();
+            this.pontoFinal = pontoInicial = null;
+            this.figura = null;
+            updatePaint();
+        }
     }
 
     private class ButtonListener implements ActionListener {
-
         @Override
         public void actionPerformed(ActionEvent e) {
             switch (e.getActionCommand()){
@@ -382,6 +406,9 @@ public class PaintRaiz extends JFrame {
                     break;
                 case "Liang-Barsky":
                         limparSelecionados(buttons.indexOf(e.getSource()));
+                    break;
+                case "Limpar Desenhos":
+                    drawingPanel.clear();
                     break;
 
             }
