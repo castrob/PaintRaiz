@@ -62,9 +62,7 @@ public class Circunferencia extends Figura {
     }
 
     @Override
-    public void rotacionarFigura(double grau) {
-
-    }
+    public void rotacionarFigura(double grau) { }
 
     @Override
     public void mudarEscalaFigura(double escalaX, double escalaY) {

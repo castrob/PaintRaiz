@@ -184,12 +184,19 @@ public class PaintRaiz extends JFrame {
     private class DrawingPanel extends Panel implements MouseListener{
         private static final int RETA = 0;
         private static final int CIRCUNFERENCIA = 1;
+        private static final int MOVER = 1;
+        private static final int ROTACIONAR = 2;
+        private static final int REDIMENCIONAR = 3;
         private boolean isDefaultAlgorithm = true;
         private Ponto pontoInicial = null;
         private Ponto pontoFinal = null;
         private Figura figura = null;
+        //Qual operacao a ser realizada ao clicar (mover = 1, rotacionar = 2, redimencionar = 3)
+        private int action = 0;
         //Todas as figuras inseridas na tela
         ArrayList<Figura> figuras = new ArrayList<>();
+        //Qual figura deve ser realizado a operacao
+        private int index;
 
         /**
          * Metodo Paint default da classe Panel desenha todas as figuras
@@ -205,6 +212,9 @@ public class PaintRaiz extends JFrame {
                         f.desenharFiguraBresenham(g);
                 }else{
                     for(Figura f : figuras)
+                        if(f.isCircunferencia)
+                            f.desenharFiguraBresenham(g);
+                        else
                         f.desenharFiguraDDA(g);
                 }
             }
@@ -212,20 +222,21 @@ public class PaintRaiz extends JFrame {
 
         /**
          * Metodo a ser chamado por classes superiores para inserir nova figura
-         * @param figura - Objeto referencia a ser adicionado
          * @param key - RETA - 0, CIRCUNFERENCIA - 1
          * @param algorithm DDA - 0, BRESENHAM - 1
          */
-        public void desenharFigura(Figura figura, int key, int algorithm){
-            if(figura != null){
+        public void desenharFigura(int key, int algorithm){
                 if(key == CIRCUNFERENCIA){
                     this.figura = new Circunferencia();
                     this.isDefaultAlgorithm = true;
                 }else if(algorithm == 0){
                     this.figura = new Reta();
                     this.isDefaultAlgorithm = false;
+                }else if(algorithm == 1){
+                    this.figura = new Reta();
+                    this.isDefaultAlgorithm = true;
                 }
-            }
+            action = 0;
         }
 
         private void updatePaint() {
@@ -234,12 +245,42 @@ public class PaintRaiz extends JFrame {
 
         @Override
         public void mouseClicked(MouseEvent e) {
-
+            if(action == 0){
+                if(pontoInicial == null && pontoFinal == null){
+                    pontoInicial = new Ponto(e.getX(), e.getY());
+                }else if(pontoFinal == null){
+                    pontoFinal = new Ponto(e.getX(), e.getY());
+                    if(figura != null){
+                        figura.pontoInicial = pontoInicial;
+                        figura.pontoFinal = pontoFinal;
+                    }
+                    figuras.add(figura);
+                    if(!figura.isCircunferencia)
+                        figura = new Reta();
+                    else
+                        figura = new Circunferencia();
+                    pontoFinal = pontoInicial = null;
+                    updatePaint();
+                }
+            }else if(action == MOVER){
+                if(figuras.isEmpty()){
+                    JOptionPane.showMessageDialog(null,"não há nenhuma figura!");
+                }else if(index < figuras.size() && index >= 0){
+                    Figura f = figuras.get(index);
+                    if(f.isCircunferencia)
+                        JOptionPane.showMessageDialog(null,"Yo no puedo mover circunferencia!");
+                    else{
+                        f.moverFigura(new Ponto(e.getX(), e.getY()));
+                        updatePaint();
+                    }
+                }else{
+                    JOptionPane.showMessageDialog(null,"posição invalida!");
+                }
+            }
         }
 
         @Override
         public void mousePressed(MouseEvent e) {
-
         }
 
         @Override
@@ -256,6 +297,48 @@ public class PaintRaiz extends JFrame {
         public void mouseExited(MouseEvent e) {
 
         }
+
+        public void rotacionarFigura() {
+            if(!figuras.isEmpty()){
+                if(index < figuras.size() && index >= 0){
+                    Figura f = figuras.get(index);
+                    if(f.isCircunferencia)
+                        JOptionPane.showMessageDialog(null,"Yo no puedo rotacionar uma circunferencia!!");
+                    else{
+                        String input = JOptionPane.showInputDialog("Digite o grau de rotação: ", "0.0");
+                        double grau = Double.parseDouble(input);
+                        f.rotacionarFigura(grau);
+                        updatePaint();
+                    }
+                }else{
+                    JOptionPane.showMessageDialog(null,"Posicion Invalida muchacho(a)");
+                }
+            }else{
+                JOptionPane.showMessageDialog(null,"Não há nenhuma figura!");
+            }
+        }
+
+        public void redimencionarFigura() {
+            if(!figuras.isEmpty()){
+                if(index < figuras.size() && index >= 0){
+                    Figura f = figuras.get(index);
+                    if(f.isCircunferencia)
+                        JOptionPane.showMessageDialog(null,"Yo no puedo redimencionar uma circunferencia!!");
+                    else{
+                        String input = JOptionPane.showInputDialog("Digite a escala de redimencionamento de X: ", "0.0");
+                        double escalaX = Double.parseDouble(input);
+                        input = JOptionPane.showInputDialog("Digite a escala de redimencionamento de Y: ", "0.0");
+                        double escalaY = Double.parseDouble(input);
+                        f.mudarEscalaFigura(escalaX, escalaY);
+                        updatePaint();
+                    }
+                }else{
+                    JOptionPane.showMessageDialog(null,"Posicion Invalida muchacho(a)");
+                }
+            }else{
+                JOptionPane.showMessageDialog(null,"Não há nenhuma figura!");
+            }
+        }
     }
 
     private class ButtonListener implements ActionListener {
@@ -265,21 +348,34 @@ public class PaintRaiz extends JFrame {
             switch (e.getActionCommand()){
                 case "DDA":
                         limparSelecionados(buttons.indexOf(e.getSource()));
+                        drawingPanel.desenharFigura(0, 0);
                     break;
                 case "Bresenham":
                         limparSelecionados(buttons.indexOf(e.getSource()));
+                        drawingPanel.desenharFigura(0, 1);
                     break;
                 case "Bresenham(Circ.)":
                         limparSelecionados(buttons.indexOf(e.getSource()));
+                        drawingPanel.desenharFigura(1, 1);
                     break;
                 case "Mover":
                         limparSelecionados(buttons.indexOf(e.getSource()));
+                        String input = JOptionPane.showInputDialog("Qual reta deve ser rotacionada? (0,1,2..)","0");
+                        drawingPanel.action = 1;
+                        drawingPanel.index = Integer.parseInt(input);
                     break;
                 case "Rotacionar":
                         limparSelecionados(buttons.indexOf(e.getSource()));
+                        input = JOptionPane.showInputDialog("Qual reta deve ser redimencionada? (0,1,2..)","0");
+                        drawingPanel.index = Integer.parseInt(input);
+                        drawingPanel.rotacionarFigura();
                     break;
                 case "Redimencionar":
                         limparSelecionados(buttons.indexOf(e.getSource()));
+                        input = JOptionPane.showInputDialog("Qual reta deve ser redimencionada? (0,1,2..)","0");
+                        drawingPanel.action = 3;
+                        drawingPanel.index = Integer.parseInt(input);
+                        drawingPanel.redimencionarFigura();
                     break;
                 case "Cohen-Sutherland":
                         limparSelecionados(buttons.indexOf(e.getSource()));
