@@ -240,6 +240,50 @@ public class Reta extends Figura{
         }
     }
 
+    @Override
+    public void cohenClip() {
+
+    }
+
+    @Override
+    public void liangClip() {
+
+    }
+
+    /**
+     * Metodo obtem qual o codigo de posicao da reta para o algoritmo de Cohen-Sutherland
+     * @param ponto Ponto da reta
+     * @param pontoMin Ponto min do recorte
+     * @param pontoMax Ponto max do recorte
+     * @return codigo de posicao
+     */
+    public int getCodigo(Ponto ponto, Ponto pontoMin, Ponto pontoMax){
+        int codigo = 0;
+
+        if(ponto.x < pontoMin.x)
+            codigo++;
+        if(ponto.x > pontoMax.x)
+            codigo += 2;
+        if(ponto.y < pontoMin.y)
+            codigo += 4;
+        if(ponto.y > pontoMax.y)
+            codigo += 8;
+
+        return codigo;
+    }
+
+    /**
+     * Metodo pega o valor de bit que sera comparado no algoritmo de Cohen-Sutherland
+     * @param codigo valor para se retirar o bit
+     * @param pos posicao do bit
+     * @return valor do bit
+     */
+    public int getBit(int codigo, int pos){
+        int bit = codigo << (31 - pos);
+        bit = bit >>> 31;
+        return bit;
+    }
+
     /**
      * Metodo de Translacao T(a,b)
      * @param novoPonto Ponto do Mouse (x,y)

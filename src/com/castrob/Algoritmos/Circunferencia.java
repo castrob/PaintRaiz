@@ -83,4 +83,14 @@ public class Circunferencia extends Figura {
     public void shearFigura(double fatorX, int opcode) {
 
     }
+
+    @Override
+    public void cohenClip() {
+
+    }
+
+    @Override
+    public void liangClip() {
+
+    }
 }
