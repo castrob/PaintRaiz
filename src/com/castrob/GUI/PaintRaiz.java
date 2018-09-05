@@ -34,14 +34,19 @@ public class PaintRaiz extends JFrame {
         JLabel cLabel = new JLabel("Circunferencia");
         JLabel tLabel = new JLabel("Transformações");
         JLabel clipLabel = new JLabel("Recorte");
+        JLabel fillLabel = new JLabel("Preenchimento");
         JLabel optionLabel = new JLabel("Opções");
+        JLabel aboutMeNameLabel = new JLabel("João Castro - 562874");
+        JLabel aboutMeEmailLabel = new JLabel("jpcbpereira@sga.pucminas.br");
 
         //Panels
         JPanel rPanel = new JPanel(new GridBagLayout());
         JPanel cPanel = new JPanel(new GridBagLayout());
         JPanel tPanel = new JPanel(new GridBagLayout());
         JPanel clipPanel = new JPanel(new GridBagLayout());
+        JPanel fillPanel = new JPanel(new GridBagLayout());
         JPanel optionPanel = new JPanel(new GridBagLayout());
+        JPanel aboutPanel = new JPanel(new GridBagLayout());
 
         //Buttons
         JRadioButton rDDA = new JRadioButton("DDA");
@@ -54,6 +59,8 @@ public class PaintRaiz extends JFrame {
         JRadioButton redimencionar = new JRadioButton("Redimencionar");
         JRadioButton cisalhamento = new JRadioButton("Cisalhamento");
         JRadioButton reflexao = new JRadioButton("Reflexao");
+        JRadioButton boundaryFill = new JRadioButton("Boundary-Fill");
+        JRadioButton floodFill = new JRadioButton("Flood-Fill");
         JButton limparTela = new JButton("Limpar Desenhos");
 
 
@@ -69,6 +76,8 @@ public class PaintRaiz extends JFrame {
         reflexao.addActionListener(new ButtonListener());
         clipCohenSutherLand.addActionListener(new ButtonListener());
         clipLiangBarsky.addActionListener(new ButtonListener());
+        boundaryFill.addActionListener(new ButtonListener());
+        floodFill.addActionListener(new ButtonListener());
         limparTela.addActionListener(new ButtonListener());
 
         //Filling the button list
@@ -82,6 +91,8 @@ public class PaintRaiz extends JFrame {
         buttons.add(clipLiangBarsky);
         buttons.add(cisalhamento);
         buttons.add(reflexao);
+        buttons.add(boundaryFill);
+        buttons.add(floodFill);
 
 
         // Configurando Painel de Ferramentas
@@ -172,22 +183,54 @@ public class PaintRaiz extends JFrame {
         cItem.gridx = 0;
         cItem.gridy = 0;
         cItem.anchor = GridBagConstraints.NORTHWEST;
+        cItem.insets = new Insets(0,0,10,5);
+        fillPanel.add(fillLabel, cItem);
+
+        cItem.gridy++;
+        cItem.insets = new Insets(0,0,5,0);
+        fillPanel.add(boundaryFill, cItem);
+
+        cItem.gridy++;
         cItem.insets = new Insets(0,0,0,0);
+        fillPanel.add(floodFill, cItem);
+
+        cGroup.gridy++;
+        painelFerramentas.add(fillPanel, cGroup);
+
+        cItem.gridx = 0;
+        cItem.gridy = 0;
+        cItem.anchor = GridBagConstraints.NORTHWEST;
+        cItem.insets = new Insets(0,0,10,5);
 
         optionPanel.add(optionLabel, cItem);
 
         cItem.gridy++;
-        cItem.insets = new Insets(0,0,10,0);
+        cItem.insets = new Insets(0,0,0,0);
         optionPanel.add(limparTela, cItem);
 
         cGroup.gridy++;
         painelFerramentas.add(optionPanel, cGroup);
 
+        cItem.gridx = 0;
+        cItem.gridy = 0;
+        cItem.anchor = GridBagConstraints.NORTHWEST;
+        cItem.insets = new Insets(0,0,10,0);
+        aboutPanel.add(aboutMeNameLabel, cItem);
+
+        cItem.gridy++;
+        cItem.anchor = GridBagConstraints.NORTHWEST;
+        cItem.insets = new Insets(0,0,10,0);
+        aboutPanel.add(aboutMeEmailLabel, cItem);
+
         cGroup.gridy++;
-        cGroup.weightx = cGroup.weighty = 1.0;
-        cGroup.insets = new Insets(0,0,0,0);
-        cGroup.fill = GridBagConstraints.BOTH;
-        painelFerramentas.add(new JPanel(new GridBagLayout()), cGroup);
+        painelFerramentas.add(aboutPanel, cGroup);
+
+
+//        cGroup.gridy++;
+//        cGroup.weightx = cGroup.weighty = 1.0;
+//        cGroup.insets = new Insets(0,0,0,0);
+//        cGroup.fill = GridBagConstraints.BOTH;
+//        painelFerramentas.add(new JPanel(new GridBagLayout()), cGroup);
 
         painelFerramentas.validate();
 
@@ -207,7 +250,7 @@ public class PaintRaiz extends JFrame {
         //Definindo preferencias
         drawingPanel.setBackground(Color.white);
         drawingPanel.addMouseListener(drawingPanel);
-        Dimension d = new Dimension(600, 500);
+        Dimension d = new Dimension(800, 600);
 
         setPreferredSize(d);
         pack();
@@ -473,17 +516,21 @@ public class PaintRaiz extends JFrame {
                     drawingPanel.index = Integer.parseInt(input);
                     drawingPanel.cisalharFigura();
                     break;
-
                 case "Cohen-Sutherland":
                         limparSelecionados(buttons.indexOf(e.getSource()));
                     break;
                 case "Liang-Barsky":
                         limparSelecionados(buttons.indexOf(e.getSource()));
                     break;
+                case "Boundary-Fill":
+                    limparSelecionados(buttons.indexOf(e.getSource()));
+                    break;
+                case "Flood-Fill":
+                    limparSelecionados(buttons.indexOf(e.getSource()));
+                    break;
                 case "Limpar Desenhos":
                     drawingPanel.clear();
                     break;
-
             }
         }
 
