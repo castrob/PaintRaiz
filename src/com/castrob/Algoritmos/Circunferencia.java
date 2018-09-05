@@ -1,6 +1,7 @@
 package com.castrob.Algoritmos;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  * @author: Joao Castro
@@ -17,10 +18,10 @@ public class Circunferencia extends Figura {
     }
 
     @Override
-    public void desenharFiguraDDA(Graphics g) {}
+    public void desenharFiguraDDA(BufferedImage g) {}
 
     @Override
-    public void desenharFiguraBresenham(Graphics g) {
+    public void desenharFiguraBresenham(BufferedImage g) {
         this.isCircunferencia = true;
         double r = Math.sqrt(Math.pow((pontoFinal.x - pontoInicial.x),2) + Math.pow((pontoFinal.y - pontoInicial.y), 2));
         double x = 0.0;
@@ -40,7 +41,7 @@ public class Circunferencia extends Figura {
         }
     }
 
-    public void setPixels(double x, double y, double xc, double yc, Graphics g){
+    public void setPixels(double x, double y, double xc, double yc, BufferedImage g){
         int sx1 = (int) Math.round(xc + x);
         int sx2 = (int)Math.round(xc - x);
         int sx3 = (int)Math.round(xc + y);

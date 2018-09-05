@@ -2,6 +2,7 @@ package com.castrob.Algoritmos;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public abstract class Figura {
 
@@ -28,13 +29,12 @@ public abstract class Figura {
         this.isCircunferencia = isCircunferencia;
     }
 
-    public void colorirPonto (int x, int y, Graphics g){
-        g.setColor(this.cor);
-        g.drawLine(x, y, x, y);
+    public void colorirPonto (int x, int y, BufferedImage g){
+        g.setRGB(x,y,Color.BLACK.getRGB());
     }
 
-    public abstract void desenharFiguraDDA(Graphics g);
-    public abstract void desenharFiguraBresenham(Graphics g);
+    public abstract void desenharFiguraDDA(BufferedImage g);
+    public abstract void desenharFiguraBresenham(BufferedImage g);
     public abstract void rotacionarFigura(double grau);
     public abstract void mudarEscalaFigura(double escalaX, double escalaY);
     public abstract void moverFigura(Ponto novoPonto);

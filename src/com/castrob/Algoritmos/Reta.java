@@ -1,6 +1,7 @@
 package com.castrob.Algoritmos;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  * Classe de implementação de uma Reta como uma figura
@@ -34,7 +35,7 @@ public class Reta extends Figura{
      * Fonte: Slides de Computacao Grafica presentes no SGA
      */
     @Override
-    public void desenharFiguraDDA(Graphics g) {
+    public void desenharFiguraDDA(BufferedImage g) {
         double dX = this.pontoFinal.x - this.pontoInicial.x;
         double dY = this.pontoFinal.y - this.pontoInicial.y;
         double x = this.pontoInicial.x;
@@ -63,7 +64,7 @@ public class Reta extends Figura{
      * Fonte: Slides de Computacao Grafica Presentes no SGA
      */
     @Override
-    public void desenharFiguraBresenham(Graphics g) {
+    public void desenharFiguraBresenham(BufferedImage g) {
         int dX, dY, x, y, i, const1, const2, p, xIncr, yIncr;
 
         dX = (int)Math.round(this.pontoFinal.x - this.pontoInicial.x);

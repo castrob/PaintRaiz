@@ -8,6 +8,7 @@ import com.castrob.Algoritmos.Reta;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class PaintRaiz extends JFrame {
@@ -250,7 +251,7 @@ public class PaintRaiz extends JFrame {
         //Definindo preferencias
         drawingPanel.setBackground(Color.white);
         drawingPanel.addMouseListener(drawingPanel);
-        Dimension d = new Dimension(800, 600);
+        Dimension d = new Dimension(1024, 720);
 
         setPreferredSize(d);
         pack();
@@ -274,6 +275,7 @@ public class PaintRaiz extends JFrame {
         ArrayList<Figura> figuras = new ArrayList<>();
         //Qual figura deve ser realizado a operacao
         private int index;
+        BufferedImage img = new BufferedImage(1280, 720, BufferedImage.TYPE_INT_RGB);
 
         /**
          * Metodo Paint default da classe Panel desenha todas as figuras
@@ -282,18 +284,19 @@ public class PaintRaiz extends JFrame {
          */
         @Override
         public void paint(Graphics g) {
-            super.paint(g);
             if(!figuras.isEmpty()){
+                g = (Graphics2D) g;
                 if(isDefaultAlgorithm){
                     for(Figura f : figuras)
-                        f.desenharFiguraBresenham(g);
+                        f.desenharFiguraBresenham(img);
                 }else{
                     for(Figura f : figuras)
                         if(f.isCircunferencia)
-                            f.desenharFiguraBresenham(g);
+                            f.desenharFiguraBresenham(img);
                         else
-                        f.desenharFiguraDDA(g);
+                        f.desenharFiguraDDA(img);
                 }
+                g.drawImage(img,0 ,0,null);
             }
         }
 
@@ -317,6 +320,9 @@ public class PaintRaiz extends JFrame {
         }
 
         private void updatePaint() {
+            for(int i = 0; i < 1024; i++)
+                for(int j = 0; j < 720;j++)
+                    img.setRGB(i,j,Color.WHITE.getRGB());
             repaint();
         }
 
@@ -419,8 +425,6 @@ public class PaintRaiz extends JFrame {
 
         public void clear() {
             this.figuras.clear();
-            this.pontoFinal = pontoInicial = null;
-            this.figura = null;
             updatePaint();
         }
 
@@ -466,6 +470,7 @@ public class PaintRaiz extends JFrame {
             }
         }
     }
+
 
     private class ButtonListener implements ActionListener {
         @Override
