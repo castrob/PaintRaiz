@@ -265,6 +265,8 @@ public class PaintRaiz extends JFrame {
         private static final int MOVER = 1;
         private static final int ROTACIONAR = 2;
         private static final int REDIMENCIONAR = 3;
+        private static final int RECORTECOHEN = 6;
+        private static final int RECORTELIANG = 7;
         private boolean isDefaultAlgorithm = true;
         private Ponto pontoInicial = null;
         private Ponto pontoFinal = null;
@@ -286,16 +288,58 @@ public class PaintRaiz extends JFrame {
         public void paint(Graphics g) {
             if(!figuras.isEmpty()){
                 g = (Graphics2D) g;
-                if(isDefaultAlgorithm){
-                    for(Figura f : figuras)
-                        f.desenharFiguraBresenham(img);
+                if(action == RECORTECOHEN){
+
+                    //Desenhando a janela de recorte
+                    double dX = pontoFinal.x - pontoInicial.x;
+                    double dY = pontoFinal.y - pontoInicial.y;
+
+                    Reta top = new Reta();
+                    Reta bottom = new Reta();
+                    Reta left = new Reta();
+                    Reta right = new Reta();
+
+                    top.pontoInicial = new Ponto(pontoInicial.x, pontoInicial.y);
+                    top.pontoFinal = new Ponto(pontoInicial.x + dX,pontoInicial.y);
+
+                    bottom.pontoInicial = new Ponto(pontoFinal.x - dX, pontoFinal.y);
+                    bottom.pontoFinal = new Ponto(pontoFinal.x, pontoFinal.y);
+
+                    left.pontoInicial = new Ponto(pontoInicial.x, pontoInicial.y);
+                    left.pontoFinal = new Ponto(bottom.pontoInicial.x, bottom.pontoInicial.y);
+
+                    right.pontoInicial = new Ponto(top.pontoFinal.x, top.pontoFinal.y);
+                    right.pontoFinal = new Ponto(pontoFinal.x, pontoFinal.y);
+                    bottom.cor = Color.MAGENTA;
+                    top.cor = Color.MAGENTA;
+                    left.cor = Color.MAGENTA;
+                    right.cor = Color.MAGENTA;
+
+                    top.desenharFiguraBresenham(img);
+                    bottom.desenharFiguraBresenham(img);
+                    left.desenharFiguraBresenham(img);
+                    right.desenharFiguraBresenham(img);
+
+                    for(Figura f : figuras){
+                        ((Reta) f).cohenClip(img, pontoInicial, pontoFinal);
+                    }
+                    pontoInicial = pontoFinal = null;
+                    this.action = 9;
+                }else if(action == RECORTELIANG){
+
                 }else{
-                    for(Figura f : figuras)
-                        if(f.isCircunferencia)
+                    if(isDefaultAlgorithm){
+                        for(Figura f : figuras)
                             f.desenharFiguraBresenham(img);
-                        else
-                        f.desenharFiguraDDA(img);
+                    }else{
+                        for(Figura f : figuras)
+                            if(f.isCircunferencia)
+                                f.desenharFiguraBresenham(img);
+                            else
+                                f.desenharFiguraDDA(img);
+                    }
                 }
+
                 g.drawImage(img,0 ,0,null);
             }
         }
@@ -359,6 +403,15 @@ public class PaintRaiz extends JFrame {
                 }else{
                     JOptionPane.showMessageDialog(null,"posição invalida!");
                 }
+            }else if(action == RECORTECOHEN){
+                if(pontoInicial == null && pontoFinal == null){
+                    pontoInicial = new Ponto(e.getX(), e.getY());
+                }else if(pontoFinal == null) {
+                    pontoFinal = new Ponto(e.getX(), e.getY());
+                    updatePaint();
+                }
+            }else if(action == RECORTELIANG){
+
             }
         }
 
@@ -523,9 +576,11 @@ public class PaintRaiz extends JFrame {
                     break;
                 case "Cohen-Sutherland":
                         limparSelecionados(buttons.indexOf(e.getSource()));
+                        drawingPanel.action = 6;
                     break;
                 case "Liang-Barsky":
                         limparSelecionados(buttons.indexOf(e.getSource()));
+                    drawingPanel.action = 7;
                     break;
                 case "Boundary-Fill":
                     limparSelecionados(buttons.indexOf(e.getSource()));
