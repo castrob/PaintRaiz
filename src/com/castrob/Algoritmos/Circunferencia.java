@@ -73,4 +73,14 @@ public class Circunferencia extends Figura {
     public void moverFigura(Ponto novoPonto) {
 
     }
+
+    @Override
+    public void espelharFigura(int opcode) {
+
+    }
+
+    @Override
+    public void shearFigura(double fatorX, int opcode) {
+
+    }
 }

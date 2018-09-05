@@ -166,6 +166,80 @@ public class Reta extends Figura{
         }
     }
 
+
+    @Override
+    public void espelharFigura(int opcode) {
+        if(!this.isCircunferencia){
+            if(opcode == 0){//espelhamento eixo x
+                //Armazena posicao inicial da linha
+                Ponto pontoOriginal = this.pontoInicial.clone();
+
+                //aplica translacao para origem
+                this.moverFigura(new Ponto(0,0));
+
+                //x' = x
+                //y' = y * -1
+                Ponto novoPontoFinal = new Ponto(this.pontoFinal.x, (this.pontoFinal.y * -1));
+
+                this.pontoFinal = novoPontoFinal;
+
+                moverFigura(pontoOriginal);
+            }else if(opcode == 1){
+                //Armazena posicao inicial da linha
+                Ponto pontoOriginal = this.pontoInicial.clone();
+
+                //aplica translacao para origem
+                this.moverFigura(new Ponto(0,0));
+
+                //x' = x
+                //y' = y * -1
+                Ponto novoPontoFinal = new Ponto((this.pontoFinal.x * -1), this.pontoFinal.y);
+
+                this.pontoFinal = novoPontoFinal;
+
+                moverFigura(pontoOriginal);
+            }else if(opcode == 2){
+                // como espelhar em relacao a origem e' igual a rotacao de 180 graus..
+                this.rotacionarFigura(180);
+            }
+        }
+    }
+
+    @Override
+    public void shearFigura(double fator, int opcode) {
+        if(!this.isCircunferencia) {
+            if (opcode == 0) {//espelhamento eixo x
+                //Armazena posicao inicial da linha
+                Ponto pontoOriginal = this.pontoInicial.clone();
+
+                //aplica translacao para origem
+                this.moverFigura(new Ponto(0, 0));
+
+                //x' = x
+                //y' = y * -1
+                Ponto novoPontoFinal = new Ponto(Math.round(this.pontoFinal.x + fator * this.pontoFinal.y), this.pontoFinal.y);
+
+                this.pontoFinal = novoPontoFinal;
+
+                moverFigura(pontoOriginal);
+            } else if (opcode == 1) {
+                //Armazena posicao inicial da linha
+                Ponto pontoOriginal = this.pontoInicial.clone();
+
+                //aplica translacao para origem
+                this.moverFigura(new Ponto(0, 0));
+
+                //x' = x
+                //y' = y * -1
+                Ponto novoPontoFinal = new Ponto(this.pontoFinal.x, Math.round(this.pontoFinal.y + fator * this.pontoFinal.x));
+
+                this.pontoFinal = novoPontoFinal;
+
+                moverFigura(pontoOriginal);
+            }
+        }
+    }
+
     /**
      * Metodo de Translacao T(a,b)
      * @param novoPonto Ponto do Mouse (x,y)
@@ -178,5 +252,6 @@ public class Reta extends Figura{
         this.pontoInicial = new Ponto(this.pontoInicial.x + dX, this.pontoInicial.y + dY);
         this.pontoFinal = new Ponto(this.pontoFinal.x + dX, this.pontoFinal.y + dY);
     }
+
 
 }

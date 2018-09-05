@@ -52,7 +52,10 @@ public class PaintRaiz extends JFrame {
         JRadioButton rotacionar = new JRadioButton("Rotacionar");
         JRadioButton mover = new JRadioButton("Mover");
         JRadioButton redimencionar = new JRadioButton("Redimencionar");
+        JRadioButton cisalhamento = new JRadioButton("Cisalhamento");
+        JRadioButton reflexao = new JRadioButton("Reflexao");
         JButton limparTela = new JButton("Limpar Desenhos");
+
 
 
         //Listeners
@@ -62,6 +65,8 @@ public class PaintRaiz extends JFrame {
         mover.addActionListener(new ButtonListener());
         rotacionar.addActionListener(new ButtonListener());
         redimencionar.addActionListener(new ButtonListener());
+        cisalhamento.addActionListener(new ButtonListener());
+        reflexao.addActionListener(new ButtonListener());
         clipCohenSutherLand.addActionListener(new ButtonListener());
         clipLiangBarsky.addActionListener(new ButtonListener());
         limparTela.addActionListener(new ButtonListener());
@@ -75,6 +80,8 @@ public class PaintRaiz extends JFrame {
         buttons.add(redimencionar);
         buttons.add(clipCohenSutherLand);
         buttons.add(clipLiangBarsky);
+        buttons.add(cisalhamento);
+        buttons.add(reflexao);
 
 
         // Configurando Painel de Ferramentas
@@ -130,8 +137,17 @@ public class PaintRaiz extends JFrame {
         tPanel.add(rotacionar, cItem);
 
         cItem.gridy++;
-        cItem.insets = new Insets(0, 0, 0, 0);
+        cItem.insets = new Insets(0, 0, 5, 0);
         tPanel.add(redimencionar, cItem);
+
+        cItem.gridy++;
+        cItem.insets = new Insets(0, 0, 5, 0);
+        tPanel.add(reflexao, cItem);
+
+        cItem.gridy++;
+        cItem.insets = new Insets(0, 0, 0, 0);
+        tPanel.add(cisalhamento, cItem);
+
 
         cGroup.gridy++;
         painelFerramentas.add(tPanel, cGroup);
@@ -364,6 +380,48 @@ public class PaintRaiz extends JFrame {
             this.figura = null;
             updatePaint();
         }
+
+        public void espelharFigura() {
+            if(!figuras.isEmpty()){
+                if(index < figuras.size() && index >= 0){
+                    Figura f = figuras.get(index);
+                    if(f.isCircunferencia)
+                        JOptionPane.showMessageDialog(null,"Yo no puedo espelhar uma circunferencia!!");
+                    else{
+                        String input = JOptionPane.showInputDialog("Digite qual eixo a ser espelhado: (0 - Eixo X, 1 - Eixo Y, 2 - Origem) ", "0");
+                        int opcode = Integer.parseInt(input);
+                        f.espelharFigura(opcode);
+                        updatePaint();
+                    }
+                }else{
+                    JOptionPane.showMessageDialog(null,"Posicion Invalida muchacho(a)");
+                }
+            }else{
+                JOptionPane.showMessageDialog(null,"Não há nenhuma figura!");
+            }
+        }
+
+        public void cisalharFigura() {
+            if(!figuras.isEmpty()){
+                if(index < figuras.size() && index >= 0){
+                    Figura f = figuras.get(index);
+                    if(f.isCircunferencia)
+                        JOptionPane.showMessageDialog(null,"Yo no puedo aplicar uma pressao numa circunferencia!!");
+                    else{
+                        String input = JOptionPane.showInputDialog("Digite qual eixo a ser cisalhado: (0 - Eixo X, 1 - Eixo Y) ", "0");
+                        int opcode = Integer.parseInt(input);
+                        input = JOptionPane.showInputDialog("Digite um fator de cisalhamento a ser aplicado: ", "0.0");
+                        double fator = Double.parseDouble(input);
+                        f.shearFigura(fator, opcode);
+                        updatePaint();
+                    }
+                }else{
+                    JOptionPane.showMessageDialog(null,"Posicion Invalida muchacho(a)");
+                }
+            }else{
+                JOptionPane.showMessageDialog(null,"Não há nenhuma figura!");
+            }
+        }
     }
 
     private class ButtonListener implements ActionListener {
@@ -401,6 +459,21 @@ public class PaintRaiz extends JFrame {
                         drawingPanel.index = Integer.parseInt(input);
                         drawingPanel.redimencionarFigura();
                     break;
+                case "Reflexao":
+                    limparSelecionados(buttons.indexOf(e.getSource()));
+                    input = JOptionPane.showInputDialog("Qual reta deve ser espelhada? (0,1,2..)","0");
+                    drawingPanel.action = 4;
+                    drawingPanel.index = Integer.parseInt(input);
+                    drawingPanel.espelharFigura();
+                    break;
+                case "Cisalhamento":
+                    limparSelecionados(buttons.indexOf(e.getSource()));
+                    input = JOptionPane.showInputDialog("Qual reta deve ser cisalhada? (0,1,2..)","0");
+                    drawingPanel.action = 5;
+                    drawingPanel.index = Integer.parseInt(input);
+                    drawingPanel.cisalharFigura();
+                    break;
+
                 case "Cohen-Sutherland":
                         limparSelecionados(buttons.indexOf(e.getSource()));
                     break;

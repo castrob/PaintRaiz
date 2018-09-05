@@ -35,9 +35,11 @@ public abstract class Figura {
 
     public abstract void desenharFiguraDDA(Graphics g);
     public abstract void desenharFiguraBresenham(Graphics g);
-    public abstract void rotacionarFigura( double grau);
+    public abstract void rotacionarFigura(double grau);
     public abstract void mudarEscalaFigura(double escalaX, double escalaY);
     public abstract void moverFigura(Ponto novoPonto);
+    public abstract void espelharFigura(int opcode);
+    public abstract void shearFigura(double fatorX, int opcode);
 
     @Override
     public String toString() {
