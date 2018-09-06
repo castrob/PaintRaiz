@@ -169,6 +169,10 @@ public class Reta extends Figura{
     }
 
 
+    /**
+     * Metodo de espelhamento ou reflaxao de uma figura
+     * @param opcode Qual o eixo de reflexao.
+     */
     @Override
     public void espelharFigura(int opcode) {
         if(!this.isCircunferencia){
@@ -207,6 +211,11 @@ public class Reta extends Figura{
         }
     }
 
+    /**
+     * Metodo de cisalhamento de uma reta
+     * @param fator Qual o fator de "forca" que esta sendo aplicado a reta
+     * @param opcode Qual o eixo que esta sendo aplicado
+     */
     @Override
     public void shearFigura(double fator, int opcode) {
         if(!this.isCircunferencia) {
@@ -242,11 +251,23 @@ public class Reta extends Figura{
         }
     }
 
+    /**
+     * Metodo de chamada para o Algoritmo de CohenSutherland implementado na classe abstrata Figura
+     * @param img BufferedImage onde é desenhado cada reta
+     * @param pontoMin Ponto minimo da janela de recorte
+     * @param pontoMax Ponto Maximo da Janela de recorte
+     */
     public void cohenClip(BufferedImage img, Ponto pontoMin, Ponto pontoMax){
         this.cohenSutherland(pontoMin, pontoMax);
         this.desenharFiguraBresenham(img);
     }
 
+    /**
+     * Metodo de chamada para o Algoritmo de LiangBarksy implementado na classe abstrata Figura
+     * @param img BufferedImage onde é desenhado cada reta
+     * @param pontoMin Ponto minimo da janela de recorte
+     * @param pontoMax Ponto Maximo da Janela de recorte
+     */
     public void liangClip(BufferedImage img, Ponto pontoMin, Ponto pontoMax){
         this.liangBarsky(pontoMin, pontoMax);
         this.desenharFiguraBresenham(img);

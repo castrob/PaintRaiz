@@ -20,6 +20,10 @@ public class Circunferencia extends Figura {
     @Override
     public void desenharFiguraDDA(BufferedImage g) {}
 
+    /**
+     * Implementacao do algoritmo de Bresenham para desenho de uma circunferencia
+     * @param g BufferedImage
+     */
     @Override
     public void desenharFiguraBresenham(BufferedImage g) {
         this.isCircunferencia = true;
@@ -41,6 +45,14 @@ public class Circunferencia extends Figura {
         }
     }
 
+    /**
+     * Metodo auxiliar para o algoritmo de Bresenham
+     * @param x valor x do ponto
+     * @param y valor y do ponto
+     * @param xc valor x do centro
+     * @param yc valor y do centro
+     * @param g bufferedimage para ser desenhada
+     */
     public void setPixels(double x, double y, double xc, double yc, BufferedImage g){
         int sx1 = (int) Math.round(xc + x);
         int sx2 = (int)Math.round(xc - x);
@@ -62,6 +74,9 @@ public class Circunferencia extends Figura {
         colorirPonto(sx4, sy4, g);
     }
 
+
+
+    /*Metodos nao implementados para circunferencia*/
     @Override
     public void rotacionarFigura(double grau) { }
 

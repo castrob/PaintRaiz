@@ -18,6 +18,12 @@ public class PaintRaiz extends JFrame {
     private JPanel painelFerramentas = new JPanel();
     private ArrayList<JRadioButton> buttons = new ArrayList<>();
 
+    // Construtor do GUI
+
+    /**
+     *  Construtor do GUI
+     *  e' utilizado o GridBagLayout para organizar todos os Panels com os RadioButtons e os Labels
+     */
     public PaintRaiz(){
         super("PaintRaiz - ComputacaoGrafica - TP1");
         //Configurando o Layout Principal
@@ -259,7 +265,11 @@ public class PaintRaiz extends JFrame {
     }
 
 
+    /**
+     * Classe responsavel pela parte desenhavel do codigo
+     */
     private class DrawingPanel extends Panel implements MouseListener{
+        // Constantes para testes durante a execucao do programa
         private static final int RETA = 0;
         private static final int CIRCUNFERENCIA = 1;
         private static final int MOVER = 1;
@@ -267,6 +277,8 @@ public class PaintRaiz extends JFrame {
         private static final int REDIMENCIONAR = 3;
         private static final int RECORTECOHEN = 6;
         private static final int RECORTELIANG = 7;
+        private static final int PREENCHEBOUNDARY = 8;
+        private static final int PREENCHEFLOOD = 9;
         private boolean isDefaultAlgorithm = true;
         private Ponto pontoInicial = null;
         private Ponto pontoFinal = null;
@@ -278,6 +290,7 @@ public class PaintRaiz extends JFrame {
         //Qual figura deve ser realizado a operacao
         private int index;
         BufferedImage img = new BufferedImage(1280, 720, BufferedImage.TYPE_INT_RGB);
+        Graphics2D teste = null;
 
         /**
          * Metodo Paint default da classe Panel desenha todas as figuras
@@ -288,7 +301,8 @@ public class PaintRaiz extends JFrame {
         public void paint(Graphics g) {
             if(!figuras.isEmpty()){
                 g = (Graphics2D) g;
-                if(action == RECORTECOHEN){
+                teste = (Graphics2D) g;
+                if(action == RECORTECOHEN || action == RECORTELIANG){
 
                     //Desenhando a janela de recorte
                     double dX = pontoFinal.x - pontoInicial.x;
@@ -320,48 +334,35 @@ public class PaintRaiz extends JFrame {
                     left.desenharFiguraBresenham(img);
                     right.desenharFiguraBresenham(img);
 
-                    for(Figura f : figuras){
-                        ((Reta) f).cohenClip(img, pontoInicial, pontoFinal);
+                    if(action == RECORTECOHEN){
+                        for(Figura f : figuras){
+                            ((Reta) f).cohenClip(img, pontoInicial, pontoFinal);
+                        }
+                        pontoInicial = pontoFinal = null;
+                        this.action = 10; // Action invalida para nao fazer nada se clicar
+                    }else{
+                        for(Figura f : figuras){
+                            ((Reta) f).liangClip(img, pontoInicial, pontoFinal);
+                        }
+                        pontoInicial = pontoFinal = null;
+                        this.action = 10; // Action invalida para nao fazer nada se clicar
                     }
+                }else if(action == PREENCHEBOUNDARY){
+                    System.out.println(pontoInicial);
+                    for(Figura f : figuras)
+                        f.desenharFiguraBresenham(img);
+                    g.drawImage(img,0 ,0,null);
+                    this.boundaryFour(img, pontoInicial.x, pontoInicial.y, Color.BLACK.getRGB(), Color.BLACK.getRGB());
+                    for(Figura f : figuras)
+                        f.desenharFiguraBresenham(img);
                     pontoInicial = pontoFinal = null;
-                    this.action = 9;
-                }else if(action == RECORTELIANG){
-
-                    //Desenhando a janela de recorte
-                    double dX = pontoFinal.x - pontoInicial.x;
-                    double dY = pontoFinal.y - pontoInicial.y;
-
-                    Reta top = new Reta();
-                    Reta bottom = new Reta();
-                    Reta left = new Reta();
-                    Reta right = new Reta();
-
-                    top.pontoInicial = new Ponto(pontoInicial.x, pontoInicial.y);
-                    top.pontoFinal = new Ponto(pontoInicial.x + dX,pontoInicial.y);
-
-                    bottom.pontoInicial = new Ponto(pontoFinal.x - dX, pontoFinal.y);
-                    bottom.pontoFinal = new Ponto(pontoFinal.x, pontoFinal.y);
-
-                    left.pontoInicial = new Ponto(pontoInicial.x, pontoInicial.y);
-                    left.pontoFinal = new Ponto(bottom.pontoInicial.x, bottom.pontoInicial.y);
-
-                    right.pontoInicial = new Ponto(top.pontoFinal.x, top.pontoFinal.y);
-                    right.pontoFinal = new Ponto(pontoFinal.x, pontoFinal.y);
-                    bottom.cor = Color.MAGENTA;
-                    top.cor = Color.MAGENTA;
-                    left.cor = Color.MAGENTA;
-                    right.cor = Color.MAGENTA;
-
-                    top.desenharFiguraBresenham(img);
-                    bottom.desenharFiguraBresenham(img);
-                    left.desenharFiguraBresenham(img);
-                    right.desenharFiguraBresenham(img);
-
-                    for(Figura f : figuras){
-                        ((Reta) f).liangClip(img, pontoInicial, pontoFinal);
-                    }
+                }else if(action == PREENCHEFLOOD){
+                    int rgb = img.getRGB((int)Math.round(pontoInicial.x), (int)Math.round(pontoInicial.y));
+                    for(Figura f : figuras)
+                        f.desenharFiguraBresenham(img);
+                    g.drawImage(img,0 ,0,null);
+                    this.floodFour(img, pontoInicial.x, pontoInicial.y, rgb , Color.BLACK.getRGB());
                     pontoInicial = pontoFinal = null;
-                    this.action = 9;
                 }else{
                     if(isDefaultAlgorithm){
                         for(Figura f : figuras)
@@ -374,7 +375,6 @@ public class PaintRaiz extends JFrame {
                                 f.desenharFiguraDDA(img);
                     }
                 }
-
                 g.drawImage(img,0 ,0,null);
             }
         }
@@ -398,6 +398,11 @@ public class PaintRaiz extends JFrame {
             action = 0;
         }
 
+        /**
+         * Metodo utilizado para atualizar uma alteracao no paint,
+         * ele primeiro seta todos os pixels como branco e depois chama o metodo repaint
+         * sem isso estava ficando tudo preto ao tentar desenhar uma reta
+         */
         private void updatePaint() {
             for(int i = 0; i < 1024; i++)
                 for(int j = 0; j < 720;j++)
@@ -405,6 +410,10 @@ public class PaintRaiz extends JFrame {
             repaint();
         }
 
+        /**
+         * Painel de desenho usa os eventos de click para definir os pontos iniciais e finais
+         * @param e
+         */
         @Override
         public void mouseClicked(MouseEvent e) {
             if(action == 0){
@@ -430,7 +439,7 @@ public class PaintRaiz extends JFrame {
                 }else if(index < figuras.size() && index >= 0){
                     Figura f = figuras.get(index);
                     if(f.isCircunferencia)
-                        JOptionPane.showMessageDialog(null,"Yo no puedo mover circunferencia!");
+                        JOptionPane.showMessageDialog(null,"Yo no puedo mover circunferencia!"); // hehe
                     else{
                         f.moverFigura(new Ponto(e.getX(), e.getY()));
                         updatePaint();
@@ -443,6 +452,11 @@ public class PaintRaiz extends JFrame {
                     pontoInicial = new Ponto(e.getX(), e.getY());
                 }else if(pontoFinal == null) {
                     pontoFinal = new Ponto(e.getX(), e.getY());
+                    updatePaint();
+                }
+            }else if(action == PREENCHEBOUNDARY || action == PREENCHEFLOOD){
+                if(pontoInicial == null){
+                    pontoInicial = new Ponto(e.getX(), e.getY());
                     updatePaint();
                 }
             }
@@ -509,11 +523,18 @@ public class PaintRaiz extends JFrame {
             }
         }
 
+        /**
+         * Metodo semelhante ao updatePaint mas este e' chamado por fora, pelo botao de limpar figuras
+         * ele e responsavel por esvaziar a lista de figuras
+         */
         public void clear() {
             this.figuras.clear();
             updatePaint();
         }
 
+        /**
+         * Lidando com o botao de espelhamento
+         */
         public void espelharFigura() {
             if(!figuras.isEmpty()){
                 if(index < figuras.size() && index >= 0){
@@ -534,6 +555,9 @@ public class PaintRaiz extends JFrame {
             }
         }
 
+        /**
+         * Lidando com o botao de cisalhamento
+         */
         public void cisalharFigura() {
             if(!figuras.isEmpty()){
                 if(index < figuras.size() && index >= 0){
@@ -555,9 +579,51 @@ public class PaintRaiz extends JFrame {
                 JOptionPane.showMessageDialog(null,"Não há nenhuma figura!");
             }
         }
+
+        /**
+         * Implementacao recursiva do metodo de preenchimento boundary4
+         * @param img BufferedImage que esta' sendo desenhado
+         * @param x valor x do ponto
+         * @param y valor y do ponto
+         * @param borda Cor da borda
+         * @param nova Cor nova a ser pintada
+         */
+        public void boundaryFour(BufferedImage img, double x, double y, int borda, int nova){
+            int atual = img.getRGB((int)Math.round(x),(int)Math.round(y));
+            if(atual != borda && atual != nova){
+                img.setRGB((int)Math.round(x), (int)Math.round(y), nova);
+                teste.drawImage(img,0,0,null);
+                boundaryFour(img,x + 1, y, borda, nova);
+                boundaryFour(img,x - 1, y, borda, nova);
+                boundaryFour(img,x, y + 1, borda, nova);
+                boundaryFour(img,x, y - 1, borda, nova);
+            }
+        }
+
+        /**
+         * Implementacao recursiva do metodo de preenchimento flood4
+         * @param img BufferedImage que esta sendo desenhado
+         * @param x valor x do ponto
+         * @param y valor y do ponto
+         * @param antiga cor antiga para ser preenchida (implementado onde e' clicado)
+         * @param nova cor nova para ser preenchida
+         */
+        public void floodFour(BufferedImage img, double x, double y, int antiga, int nova){
+            int atual = img.getRGB((int)Math.round(x),(int)Math.round(y));
+            if(atual == antiga){
+                img.setRGB((int)Math.round(x), (int)Math.round(y), Color.BLACK.getRGB());
+                floodFour(img,x + 1, y, antiga, nova);
+                floodFour(img,x - 1, y, antiga, nova);
+                floodFour(img,x, y + 1, antiga, nova);
+                floodFour(img,x, y - 1, antiga, nova);
+            }
+        }
     }
 
 
+    /**
+     * Classe para lidar com os clicks nos botoes do menu
+     */
     private class ButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -617,9 +683,11 @@ public class PaintRaiz extends JFrame {
                     break;
                 case "Boundary-Fill":
                     limparSelecionados(buttons.indexOf(e.getSource()));
+                    drawingPanel.action = 8;
                     break;
                 case "Flood-Fill":
                     limparSelecionados(buttons.indexOf(e.getSource()));
+                    drawingPanel.action = 9;
                     break;
                 case "Limpar Desenhos":
                     drawingPanel.clear();
@@ -627,6 +695,11 @@ public class PaintRaiz extends JFrame {
             }
         }
 
+        /**
+         * metodo para remover selecao de outros radiobuttons
+         * para que fique apenas um com bolinha
+         * @param index
+         */
         public void limparSelecionados(int index){
             for(int i = 0; i < buttons.size(); i++)
                 if(i != index)

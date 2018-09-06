@@ -19,7 +19,6 @@ public abstract class Figura {
         this.isCircunferencia = false;
         this.isDentroJanela = true;
     }
-
     public Figura(){
         this.pontoFinal = null;
         this.pontoInicial = null;
@@ -39,6 +38,11 @@ public abstract class Figura {
         g.setRGB(x,y,this.cor.getRGB());
     }
 
+    /**
+     * Implementacao do algoritmo de CohenSutherland para recorte
+     * @param pontoMin pontoMinimo da Janela de Recorte
+     * @param pontoMax pontoMaximo da Janela de Recorte
+     */
     public void cohenSutherland(Ponto pontoMin, Ponto pontoMax){
         boolean aceito = false, feito = false;
 
@@ -95,6 +99,12 @@ public abstract class Figura {
         }
 
     }
+
+    /**
+     * Implementacao do algoritmo de Liang Barsky para recorte
+     * @param pontoMin pontoMinimo da Janela de Recorte
+     * @param pontoMax pontoMaximo da Janela de Recorte
+     */
     public void liangBarsky(Ponto pontoMin, Ponto pontoMax){
         double x1 = this.pontoInicial.x;
         double y1 = this.pontoInicial.y;
@@ -128,6 +138,30 @@ public abstract class Figura {
                     }
     }
 
+
+    /*Metodos que vao ser implementados pelas classes Reta e Circunferencia*/
+    public abstract void desenharFiguraDDA(BufferedImage g);
+    public abstract void desenharFiguraBresenham(BufferedImage g);
+    public abstract void rotacionarFigura(double grau);
+    public abstract void mudarEscalaFigura(double escalaX, double escalaY);
+    public abstract void moverFigura(Ponto novoPonto);
+    public abstract void espelharFigura(int opcode);
+    public abstract void shearFigura(double fatorX, int opcode);
+
+    @Override
+    public String toString() {
+        return "Figura{" +
+                "pontoInicial=" + pontoInicial +
+                ", pontoFinal=" + pontoFinal +
+                '}';
+    }
+
+    /**
+     * Metodo de ClipSet para uso no algoritmo de Liang Barsky
+     * @param p
+     * @param q
+     * @return
+     */
     public boolean clipSet(double p, double q){
         double r = q / p;
 
@@ -150,21 +184,6 @@ public abstract class Figura {
         }
 
         return true;
-    }
-    public abstract void desenharFiguraDDA(BufferedImage g);
-    public abstract void desenharFiguraBresenham(BufferedImage g);
-    public abstract void rotacionarFigura(double grau);
-    public abstract void mudarEscalaFigura(double escalaX, double escalaY);
-    public abstract void moverFigura(Ponto novoPonto);
-    public abstract void espelharFigura(int opcode);
-    public abstract void shearFigura(double fatorX, int opcode);
-
-    @Override
-    public String toString() {
-        return "Figura{" +
-                "pontoInicial=" + pontoInicial +
-                ", pontoFinal=" + pontoFinal +
-                '}';
     }
 
     /**
