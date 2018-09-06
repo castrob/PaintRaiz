@@ -327,6 +327,41 @@ public class PaintRaiz extends JFrame {
                     this.action = 9;
                 }else if(action == RECORTELIANG){
 
+                    //Desenhando a janela de recorte
+                    double dX = pontoFinal.x - pontoInicial.x;
+                    double dY = pontoFinal.y - pontoInicial.y;
+
+                    Reta top = new Reta();
+                    Reta bottom = new Reta();
+                    Reta left = new Reta();
+                    Reta right = new Reta();
+
+                    top.pontoInicial = new Ponto(pontoInicial.x, pontoInicial.y);
+                    top.pontoFinal = new Ponto(pontoInicial.x + dX,pontoInicial.y);
+
+                    bottom.pontoInicial = new Ponto(pontoFinal.x - dX, pontoFinal.y);
+                    bottom.pontoFinal = new Ponto(pontoFinal.x, pontoFinal.y);
+
+                    left.pontoInicial = new Ponto(pontoInicial.x, pontoInicial.y);
+                    left.pontoFinal = new Ponto(bottom.pontoInicial.x, bottom.pontoInicial.y);
+
+                    right.pontoInicial = new Ponto(top.pontoFinal.x, top.pontoFinal.y);
+                    right.pontoFinal = new Ponto(pontoFinal.x, pontoFinal.y);
+                    bottom.cor = Color.MAGENTA;
+                    top.cor = Color.MAGENTA;
+                    left.cor = Color.MAGENTA;
+                    right.cor = Color.MAGENTA;
+
+                    top.desenharFiguraBresenham(img);
+                    bottom.desenharFiguraBresenham(img);
+                    left.desenharFiguraBresenham(img);
+                    right.desenharFiguraBresenham(img);
+
+                    for(Figura f : figuras){
+                        ((Reta) f).liangClip(img, pontoInicial, pontoFinal);
+                    }
+                    pontoInicial = pontoFinal = null;
+                    this.action = 9;
                 }else{
                     if(isDefaultAlgorithm){
                         for(Figura f : figuras)
@@ -403,15 +438,13 @@ public class PaintRaiz extends JFrame {
                 }else{
                     JOptionPane.showMessageDialog(null,"posição invalida!");
                 }
-            }else if(action == RECORTECOHEN){
+            }else if(action == RECORTECOHEN || action == RECORTELIANG){
                 if(pontoInicial == null && pontoFinal == null){
                     pontoInicial = new Ponto(e.getX(), e.getY());
                 }else if(pontoFinal == null) {
                     pontoFinal = new Ponto(e.getX(), e.getY());
                     updatePaint();
                 }
-            }else if(action == RECORTELIANG){
-
             }
         }
 

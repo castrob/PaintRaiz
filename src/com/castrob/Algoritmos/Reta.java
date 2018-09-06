@@ -247,6 +247,11 @@ public class Reta extends Figura{
         this.desenharFiguraBresenham(img);
     }
 
+    public void liangClip(BufferedImage img, Ponto pontoMin, Ponto pontoMax){
+        this.liangBarsky(pontoMin, pontoMax);
+        this.desenharFiguraBresenham(img);
+    }
+
     /**
      * Metodo de Translacao T(a,b)
      * @param novoPonto Ponto do Mouse (x,y)

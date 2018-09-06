@@ -10,6 +10,7 @@ public abstract class Figura {
     public Color cor;
     public boolean isCircunferencia;
     public boolean isDentroJanela;
+    double u1, u2;
 
     public Figura(double xInicial, double yInicial, double xFinal, double yFinal, Color cor) {
         this.pontoInicial = new Ponto( xInicial, yInicial);
@@ -94,8 +95,62 @@ public abstract class Figura {
         }
 
     }
-    public void liangClip(){}
+    public void liangBarsky(Ponto pontoMin, Ponto pontoMax){
+        double x1 = this.pontoInicial.x;
+        double y1 = this.pontoInicial.y;
+        double x2 = this.pontoFinal.x;
+        double y2 = this.pontoFinal.y;
 
+        double dX = x2 - x1;
+        double dY = y2 - y1;
+
+        this.u1 = 0.0;
+        this.u2 = 1.0;
+
+        this.isDentroJanela = false;
+
+        if(clipSet(-dX,x1 - pontoMin.x))
+            if(clipSet(dX, pontoMax.x - x1))
+                if(clipSet(-dY, y1 - pontoMin.y))
+                    if(clipSet(dY, pontoMax.y - y1)){
+                        if(u2 < 1.0){
+                            x2 = x1 + dX * u2;
+                            y2 = y1 + dY * u2;
+                        }
+                        if(u1 > 0.0){
+                            x1 = x1 + dX * u1;
+                            y1 = y1 + dY * u1;
+                        }
+
+                        this.isDentroJanela = true;
+                        this.pontoInicial = new Ponto(Math.round(x1), Math.round(y1));
+                        this.pontoFinal = new Ponto(Math.round(x2), Math.round(y2));
+                    }
+    }
+
+    public boolean clipSet(double p, double q){
+        double r = q / p;
+
+        if(p < 0){
+            if(r > 1){
+                return false;
+            }
+            else if(r > u1){
+                u1 = r;
+            }
+        }else if(p > 0){
+            if(r < 0){
+                return false;
+            }
+            else if(r < u2){
+                u2 = r;
+            }
+        }else if(q < 0){
+            return false;
+        }
+
+        return true;
+    }
     public abstract void desenharFiguraDDA(BufferedImage g);
     public abstract void desenharFiguraBresenham(BufferedImage g);
     public abstract void rotacionarFigura(double grau);
