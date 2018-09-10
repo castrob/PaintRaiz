@@ -12,6 +12,8 @@ _sendo necessário o java JRE instalado na sua máquina.._
 $ javac Main.java
 $ java Main
 ```
+- Video explicando a utilização do aplicativo:
+[PaintRaiz - Computação Cráfica - PUC Minas 2/2018](https://youtu.be/EF9Eur1j_Hg)
 
 Ferramentas Utilizadas:
 - IntelliJ IDEA 2018.2.2 - Ultimate (Student License)
