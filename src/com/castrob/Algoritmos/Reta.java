@@ -259,7 +259,8 @@ public class Reta extends Figura{
      */
     public void cohenClip(BufferedImage img, Ponto pontoMin, Ponto pontoMax){
         this.cohenSutherland(pontoMin, pontoMax);
-        this.desenharFiguraBresenham(img);
+        if(this.isDentroJanela)
+            this.desenharFiguraBresenham(img);
     }
 
     /**
@@ -270,6 +271,7 @@ public class Reta extends Figura{
      */
     public void liangClip(BufferedImage img, Ponto pontoMin, Ponto pontoMax){
         this.liangBarsky(pontoMin, pontoMax);
+        if(this.isDentroJanela)
         this.desenharFiguraBresenham(img);
     }
 

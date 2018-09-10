@@ -642,7 +642,7 @@ public class PaintRaiz extends JFrame {
                     break;
                 case "Mover":
                         limparSelecionados(buttons.indexOf(e.getSource()));
-                        String input = JOptionPane.showInputDialog("Qual reta deve ser rotacionada? (0,1,2..)","0");
+                        String input = JOptionPane.showInputDialog("Qual reta deve ser movida? (0,1,2..)","0");
                         drawingPanel.action = 1;
                         drawingPanel.index = Integer.parseInt(input);
                     break;
